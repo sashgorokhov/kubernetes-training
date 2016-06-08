@@ -1,0 +1,10 @@
+- model: auth.user
+  pk: 1
+  fields:
+    password: pbkdf2_sha256$24000$jkS69hNH724Y$nmzbwpkUrH0dvzR/rLRA+hc9WEodBpiB8+x8YQ9vr/U=
+    is_superuser: true
+    is_staff: true
+    username: admin
+    first_name: admin
+    last_name: admin
+    email: admin@example.com

@@ -1,0 +1,32 @@
+---
+  kind: Pod
+  apiVersion: v1
+  metadata:
+    name: kube-scheduler
+    namespace: kube-system
+  spec:
+    hostNetwork: true
+    containers:
+      -
+        name: "kube-scheduler"
+        image: gcr.io/google_containers/hyperkube:v1.2.4
+        command:
+          - /hyperkube
+          - scheduler
+          - --master=http://127.0.0.1:8080
+        volumeMounts:
+          -
+            name: "config"
+            mountPath: "/etc/kubernetes"
+            readOnly: true
+        livenessProbe:
+          httpGet:
+            path: "/healthz"
+            port: 10251
+          initialDelaySeconds: 15
+          timeoutSeconds: 15
+    volumes:
+      -
+        name: "config"
+        hostPath:
+          path: "/etc/kubernetes"

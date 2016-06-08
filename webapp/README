@@ -1,0 +1,9 @@
+set ./webapp folder as sources root in pycharm
+
+after first start, initialize database by running migrations and loading fixtures:
+ manage.py migrate
+ manage.py loaddata initial
+
+access django admin with following credentials:
+ username: admin
+ password: admin

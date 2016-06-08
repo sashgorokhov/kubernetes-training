@@ -1,0 +1,22 @@
+---
+  kind: Pod
+  apiVersion: v1
+  metadata:
+    name: registry
+    namespace: kube-system
+  spec:
+    hostNetwork: true
+    containers:
+      - name: registry
+        image: "registry"
+        volumeMounts:
+          - mountPath: /var/lib/registry
+            name: "registry-data"
+        ports:
+        - containerPort: 5000
+          hostPort: 5000
+          name: registry
+    volumes:
+      - name: "registry-data"
+        hostPath:
+          path: "/mnt/registry"
