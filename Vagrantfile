@@ -19,6 +19,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "docker" do |docker|
     docker.pull_images "gcr.io/google_containers/hyperkube:v1.2.4"
     docker.pull_images "quay.io/coreos/etcd:v2.2.1"
+    docker.pull_images "registry"
   end
 
   config.vm.provision "shell", inline: <<-SHELL
@@ -30,6 +31,11 @@ Vagrant.configure(2) do |config|
     apt-get update
     apt-get install -y bridge-utils
 
+    if [ ! -f $RELEASE_TAR ] && [ ! -d $RELEASE_EXTRACTED ]; then
+        sudo apt-get update > /dev/null
+        sudo apt-get install -y wget > /dev/null
+        wget --progress=bar:force -nc -O $RELEASE_TAR https://github.com/kubernetes/kubernetes/releases/download/v1.2.4/kubernetes.tar.gz
+    fi
     if [ ! -d $RELEASE_EXTRACTED ]; then
         mkdir -p $RELEASE_EXTRACTED
         tar -C $RELEASE_EXTRACTED --strip-components 1 -xzf $RELEASE_TAR 2>/dev/null || true
