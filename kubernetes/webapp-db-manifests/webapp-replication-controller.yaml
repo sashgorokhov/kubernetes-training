@@ -10,9 +10,11 @@ spec:
     spec:
       containers:
         - name: webapp
-          image: localhost:5000/webapp
+          image: master:5000/webapp
           ports:
             - containerPort: 80
+      nodeSelector:
+        node: node-1
     metadata:
       labels:
         name: webapp

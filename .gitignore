@@ -1,4 +1,3 @@
 .vagrant
 .idea
-kubernetes/release/kubernetes
-kubernetes/release/kubernetes.tar.gz
+kubernetes/release/*
