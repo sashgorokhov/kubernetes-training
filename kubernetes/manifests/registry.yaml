@@ -8,7 +8,7 @@
     hostNetwork: true
     containers:
       - name: registry
-        image: "registry"
+        image: registry:2
         volumeMounts:
           - mountPath: /var/lib/registry
             name: "registry-data"
