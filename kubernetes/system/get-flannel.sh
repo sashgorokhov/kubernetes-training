@@ -7,11 +7,11 @@ FLANNEL_EXTRACTED="$RELEASE_PATH/flannel"
 
 
 if [ ! -f $FLANNEL_TAR ] && [ ! -d $FLANNEL_EXTRACTED ]; then
-    sudo apt-get update > /dev/null
-    sudo apt-get install -y wget > /dev/null
-    wget --progress=bar:force -nc -O $FLANNEL_TAR $FLANNEL_URL
+    echo Downloading $FLANNEL_URL
+    curl -L  $FLANNEL_URL -o $FLANNEL_TAR
 fi
 if [ ! -d $FLANNEL_EXTRACTED ]; then
+    echo Extracting $FLANNEL_TAR
     mkdir -p $FLANNEL_EXTRACTED
     tar -C $FLANNEL_EXTRACTED --strip-components 1 -xzf $FLANNEL_TAR 2>/dev/null || true
 fi

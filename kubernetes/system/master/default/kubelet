@@ -1,0 +1,1 @@
+KUBELET_OPTS="--v=2 --api-servers=http://master:8080 --allow-privileged=true --register-node=true --config=/etc/kubernetes/manifests --logtostderr=true --cluster-domain=cluster.local --cluster-dns=10.0.0.10"

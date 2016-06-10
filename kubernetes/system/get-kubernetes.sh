@@ -8,11 +8,11 @@ BINARIES_DIR="$KUBERNETES_EXTRACTED/server/bin"
 
 
 if [ ! -f $KUBERNETES_TAR ] && [ ! -d $KUBERNETES_EXTRACTED ]; then
-    sudo apt-get update > /dev/null
-    sudo apt-get install -y wget > /dev/null
-    wget --progress=bar:force -nc -O $KUBERNETES_TAR $KUBERNETES_URL
+    echo Downloading $KUBERNETES_URL
+    curl -L  $KUBERNETES_URL -o $KUBERNETES_TAR
 fi
 if [ ! -d $KUBERNETES_EXTRACTED ]; then
+    echo Extracting $KUBERNETES_TAR
     mkdir -p $KUBERNETES_EXTRACTED
     tar -C $KUBERNETES_EXTRACTED --strip-components 1 -xzf $KUBERNETES_TAR 2>/dev/null || true
 fi
