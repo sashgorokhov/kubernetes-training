@@ -21,6 +21,8 @@ spec:
           volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: "db-data"
+      nodeSelector:
+        node: master
       volumes:
       - name: "db-data"
         hostPath:

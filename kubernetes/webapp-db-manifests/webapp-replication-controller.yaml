@@ -13,8 +13,18 @@ spec:
           image: master:5000/webapp
           ports:
             - containerPort: 80
-      #nodeSelector:
-      #  node: node-1
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
     metadata:
       labels:
         name: webapp
