@@ -1,1 +1,1 @@
-FLANNEL_OPTS="--etcd-endpoints=http://master:2379"
+FLANNEL_OPTS="--etcd-endpoints=http://master:2379 --iface=eth1"

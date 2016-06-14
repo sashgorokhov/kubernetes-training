@@ -16,7 +16,7 @@ Vagrant.configure(2) do |config|
     end
     master.vm.hostname = "master"
     master.vm.network "forwarded_port", guest: 8080, host: 8080
-    master.vm.network "forwarded_port", guest: 80, host: 8000  # reverse-proxy to webapp
+    #master.vm.network "forwarded_port", guest: 80, host: 8000  # reverse-proxy to webapp
     master.vm.synced_folder "kubernetes/manifests/", "/etc/kubernetes/manifests"
 
     master.vm.provision "shell", inline: <<-SHELL
@@ -34,6 +34,7 @@ Vagrant.configure(2) do |config|
 
       apt-get update -qq
       apt-get install -qqy bridge-utils
+      apt-get autoremove -qqy
 
       ip link set dev docker0 down || true
       brctl delbr docker0 || true
@@ -52,7 +53,8 @@ Vagrant.configure(2) do |config|
       sleep 10s
 
       #etcdctl rm --recursive /coreos.com/network
-      etcdctl set /coreos.com/network/config '{ "Network": "172.17.0.0/16" }'
+      etcdctl set /coreos.com/network/config < /vagrant/kubernetes/system/flannel-config.json
+      etcdctl get /coreos.com/network/config
 
       start flanneld
       echo Started flanneld, waiting 10 seconds for it to launch
@@ -64,6 +66,12 @@ Vagrant.configure(2) do |config|
       fi
       start docker
 
+    SHELL
+    master.vm.provision "shell", inline: <<-SHELL
+        docker build --rm=true --force-rm -t master:5000/webapp /vagrant/webapp
+        echo Sleeping 30s until docker registry starts
+        sleep 30s
+        docker push master:5000/webapp
     SHELL
     #master.vm.provision "shell", inline: <<-SHELL
     #  apt-get install -y nginx
@@ -81,7 +89,7 @@ Vagrant.configure(2) do |config|
     node.vm.hostname = "node-1"
     node.vm.provision "shell", inline: <<-SHELL
         if ! `cat /etc/hosts | grep -q master`; then
-            echo "172.28.128.8 master" | tee -a /etc/hosts
+            echo "172.28.128.5 master" | tee -a /etc/hosts
         fi
         touch /home/vagrant/.bashrc
         if ! `cat /home/vagrant/.bashrc | grep -q "alias kubectl"`; then
@@ -93,12 +101,15 @@ Vagrant.configure(2) do |config|
         cp /vagrant/kubernetes/system/node/default/* /etc/default/
         mkdir -p /etc/kubernetes/manifests
     SHELL
-    node.vm.provision "docker"
+    node.vm.provision "docker" do |docker|
+        docker.pull_images "master:5000/webapp"
+    end
     node.vm.provision "shell", inline: <<-SHELL
       stop docker || true
 
       apt-get update -qq
       apt-get install -qqy bridge-utils
+      apt-get autoremove -qqy
 
       ip link set dev docker0 down || true
       brctl delbr docker0 || true
@@ -111,7 +122,6 @@ Vagrant.configure(2) do |config|
         exit 1
       fi
       start docker
-
     SHELL
   end
 
