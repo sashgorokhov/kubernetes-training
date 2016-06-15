@@ -17,13 +17,13 @@ spec:
             httpGet:
               path: /health
               port: 80
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 80
-            initialDelaySeconds: 20
+            initialDelaySeconds: 60
             timeoutSeconds: 5
     metadata:
       labels:
