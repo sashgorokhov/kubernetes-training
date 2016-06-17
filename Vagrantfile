@@ -93,8 +93,9 @@ Vagrant.configure(2) do |config|
       vb.cpus = "2"
     end
     master.vm.hostname = "master"
-    master.vm.network "forwarded_port", guest: 8080, host: 8080
-    master.vm.network "forwarded_port", guest: 80, host: 8000  # reverse-proxy to webapp
+    master.vm.network "forwarded_port", guest: 8080, host: 8080 # apiserver
+    master.vm.network "forwarded_port", guest: 3000, host: 3000 # grafana
+    master.vm.network "forwarded_port", guest: 4194, host: 4194 # cadvisor
     master.vm.synced_folder "kubernetes/manifests/", "/etc/kubernetes/manifests"
   end
 

@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: kube-dns
+  name: kube-dns
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    name: kube-dns
+  template:
+    metadata:
+      labels:
+        name: kube-dns
+    spec:
+      hostNetwork: true
+      dnsPolicy: Default
+      containers:
+        - name: kube2sky
+          image: gcr.io/google_containers/kube2sky:1.14
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          args:
+            - --domain=cluster.local
+            - --kube-master-url=http://master:8080
+            - --etcd-server=http://master:4001
+        - name: skydns
+          image: gcr.io/google_containers/skydns:2015-10-13-8c72f8c
+          resources:
+            limits:
+              cpu: 100m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+          args:
+            - --machines=http://master:4001
+            - --addr=0.0.0.0:53
+            - --ns-rotate=false
+            - --domain=cluster.local.
+          ports:
+          - containerPort: 53
+            name: dns
+            protocol: UDP
+          - containerPort: 53
+            name: dns-tcp
+            protocol: TCP
