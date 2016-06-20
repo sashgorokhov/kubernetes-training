@@ -9,7 +9,7 @@ BINARIES_DIR="$KUBERNETES_EXTRACTED/server/bin"
 
 if [ ! -f $KUBERNETES_TAR ] && [ ! -d $KUBERNETES_EXTRACTED ]; then
     echo Downloading $KUBERNETES_URL
-    curl -L  $KUBERNETES_URL -o $KUBERNETES_TAR
+    curl -s -L  $KUBERNETES_URL -o $KUBERNETES_TAR
 fi
 if [ ! -d $KUBERNETES_EXTRACTED ]; then
     echo Extracting $KUBERNETES_TAR
