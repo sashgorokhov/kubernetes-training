@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 RELEASE_PATH='/vagrant/kubernetes/release'
-HEAPSTER_TAR="$RELEASE_PATH/heapster-1.0.2.tar.gz"
-HEAPSTER_URL="https://github.com/kubernetes/heapster/archive/v1.0.2.tar.gz"
-HEAPSTER_EXTRACTED="$RELEASE_PATH/heapster"
+HEAPSTER_TAR="$RELEASE_PATH/heapster-v1.1.0.tar.gz"
+HEAPSTER_URL="https://github.com/kubernetes/heapster/archive/v1.1.0.tar.gz"
+HEAPSTER_EXTRACTED="$RELEASE_PATH/heapster-v1.1.0"
 
 
 if [ ! -f $HEAPSTER_TAR ] && [ ! -d $HEAPSTER_EXTRACTED ]; then
     echo Downloading $HEAPSTER_URL
-    curl -L  $HEAPSTER_URL -o $HEAPSTER_TAR
+    curl -s -L  $HEAPSTER_URL -o $HEAPSTER_TAR
 fi
 if [ ! -d $HEAPSTER_EXTRACTED ]; then
     echo Extracting $HEAPSTER_TAR

@@ -8,7 +8,7 @@ FLANNEL_EXTRACTED="$RELEASE_PATH/flannel"
 
 if [ ! -f $FLANNEL_TAR ] && [ ! -d $FLANNEL_EXTRACTED ]; then
     echo Downloading $FLANNEL_URL
-    curl -L  $FLANNEL_URL -o $FLANNEL_TAR
+    curl -s -L  $FLANNEL_URL -o $FLANNEL_TAR
 fi
 if [ ! -d $FLANNEL_EXTRACTED ]; then
     echo Extracting $FLANNEL_TAR

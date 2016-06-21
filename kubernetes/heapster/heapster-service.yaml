@@ -3,11 +3,13 @@ kind: Service
 metadata:
   labels:
     name: heapster
+    kubernetes.io/cluster-service: "true"
+    kubernetes.io/name: "Heapster"
   name: heapster
   namespace: kube-system
 spec:
   ports:
-  - name: heapster
-    port: 8082
+  - port: 80
+    targetPort: 8082
   selector:
     name: heapster

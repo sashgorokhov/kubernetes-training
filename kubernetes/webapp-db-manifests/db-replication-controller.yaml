@@ -21,6 +21,13 @@ spec:
           volumeMounts:
           - mountPath: /var/lib/postgresql/data
             name: "db-data"
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "200m"
+            limits:
+              memory: "200Mi"
+              cpu: "400m"
       nodeSelector:
         node: master
       volumes:

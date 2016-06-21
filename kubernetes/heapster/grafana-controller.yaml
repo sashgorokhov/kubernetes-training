@@ -2,22 +2,22 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   labels:
-    name: grafana-monitoring
-  name: grafana-monitoring
+    name: monitoring-grafana
+  name: monitoring-grafana
   namespace: kube-system
 spec:
   replicas: 1
   selector:
-    name: grafana-monitoring
+    name: monitoring-grafana
   template:
     metadata:
       labels:
-        name: grafana-monitoring
+        name: monitoring-grafana
     spec:
       hostNetwork: true
       containers:
-      - name: grafana-monitoring
-        image: kubernetes/heapster_grafana:v2.1.0
+      - name: monitoring-grafana
+        image: master:5000/grafana
         env:
           - name: INFLUXDB_SERVICE_URL
             value: http://master:8086

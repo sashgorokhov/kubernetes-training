@@ -14,6 +14,7 @@
           - /hyperkube
           - controller-manager
           - --master=http://master:8080
+          - --v=3
         volumeMounts:
           -
             name: "etcssl"

@@ -1,0 +1,1 @@
+APISERVER_OPTS="--v=3 --bind-address=0.0.0.0 --insecure-bind-address=0.0.0.0 --etcd_servers=http://master:2379 --allow-privileged=true --service-cluster-ip-range=10.254.0.0/16 --advertise-address=192.168.140.50"

@@ -17,7 +17,7 @@ spec:
       hostNetwork: true
       containers:
       - name: influxdb
-        image: kubernetes/heapster_influxdb:v0.5
+        image: master:5000/influxdb
         volumeMounts:
         - mountPath: /data
           name: influxdb-storage

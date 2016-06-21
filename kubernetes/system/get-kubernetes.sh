@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
 RELEASE_PATH='/vagrant/kubernetes/release'
-KUBERNETES_TAR="$RELEASE_PATH/kubernetes.tar.gz"
-KUBERNETES_URL="https://github.com/kubernetes/kubernetes/releases/download/v1.2.4/kubernetes.tar.gz"
-KUBERNETES_EXTRACTED="$RELEASE_PATH/kubernetes"
+KUBERNETES_TAR="$RELEASE_PATH/kubernetes-v1.3.0-beta.1.tar.gz"
+KUBERNETES_URL="https://github.com/kubernetes/kubernetes/releases/download/v1.3.0-beta.1/kubernetes.tar.gz"
+KUBERNETES_EXTRACTED="$RELEASE_PATH/kubernetes-v1.3.0-beta.1"
 BINARIES_DIR="$KUBERNETES_EXTRACTED/server/bin"
 
 
 if [ ! -f $KUBERNETES_TAR ] && [ ! -d $KUBERNETES_EXTRACTED ]; then
     echo Downloading $KUBERNETES_URL
+    echo Warning! Archive size is ~900Mb, you can go and make a cup of tea.
     curl -s -L  $KUBERNETES_URL -o $KUBERNETES_TAR
 fi
 if [ ! -d $KUBERNETES_EXTRACTED ]; then

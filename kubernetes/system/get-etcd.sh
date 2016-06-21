@@ -8,7 +8,7 @@ ETCD_EXTRACTED="$RELEASE_PATH/etcd-v2.3.6-linux-amd64"
 
 if [ ! -f $ETCD_TAR ] && [ ! -d $ETCD_EXTRACTED ]; then
     echo Downloading $ETCD_URL
-    curl -L  $ETCD_URL -o $ETCD_TAR
+    curl -s -L  $ETCD_URL -o $ETCD_TAR
 fi
 if [ ! -d $ETCD_EXTRACTED ]; then
     echo Extracting $ETCD_TAR

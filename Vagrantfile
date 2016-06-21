@@ -25,6 +25,7 @@ Vagrant.configure(2) do |config|
     fi
 
     function stop-all {
+        stop kube-apiserver || true
         stop kubelet || true
         stop docker || true
         stop flanneld || true
@@ -67,7 +68,7 @@ Vagrant.configure(2) do |config|
     fi
 
     start flanneld || true
-    stop kubelet || true
+    stop kube-apiserver || true
 
     sleep 10s
     if [ ! -f /run/flannel/subnet.env ]; then
@@ -75,7 +76,7 @@ Vagrant.configure(2) do |config|
       exit 1
     fi
 
-    apt-get install -qqy bridge-utils
+    apt-get install -qqy bridge-utils python-pip
 
     ip link set dev docker0 down || true
     brctl delbr docker0 || true
@@ -92,7 +93,7 @@ Vagrant.configure(2) do |config|
     #else
         #docker pull master:5000/webapp
     fi
-    start kubelet
+    start kube-apiserver
 
     apt-get autoremove -qqy
   SHELL
@@ -104,6 +105,12 @@ Vagrant.configure(2) do |config|
     end
     master.vm.hostname = "master"
     master.vm.network "public_network", ip: "192.168.140.50"
+    master.vm.network "forwarded_port", guest: 4040, host: 4040 # kubectl proxy
+    master.vm.network "forwarded_port", guest: 8080, host: 8080 # apiserver
+    master.vm.network "forwarded_port", guest: 3000, host: 3000 # grafana
+    master.vm.network "forwarded_port", guest: 4194, host: 4194 # cadvisor
+    master.vm.network "forwarded_port", guest: 8083, host: 8083 # influxdb-web
+    master.vm.network "forwarded_port", guest: 8086, host: 8086 # influxdb
     master.vm.synced_folder "kubernetes/manifests/", "/etc/kubernetes/manifests"
   end
 
