@@ -6,32 +6,15 @@ class puppet::server {
     ensure => present,
   }
 
-  package { 'puppet-lint':
-    ensure   => latest,
-    provider => gem,
-  }
-
-  file { 'puppet.conf':
-    path    => '/etc/puppet/puppet.conf',
+  file { '/etc/puppet/puppet.conf':
     owner   => 'puppet',
     group   => 'puppet',
     mode    => '0644',
     source  => 'puppet:///modules/puppet/puppet.conf',
     require => Package['puppetserver'],
-    notify  => Service['puppetserver'],
   }
 
-  file { 'site.pp':
-    path    => '/etc/puppet/manifests/site.pp',
-    owner   => 'puppet',
-    group   => 'puppet',
-    mode    => '0644',
-    source  => 'puppet:///modules/puppet/site.pp',
-    require => Package[ 'puppetserver' ],
-  }
-
-  file { 'autosign.conf':
-    path    => '/etc/puppet/autosign.conf',
+  file { '/etc/puppet/autosign.conf':
     owner   => 'puppet',
     group   => 'puppet',
     mode    => '0644',
@@ -39,21 +22,14 @@ class puppet::server {
     require => Package['puppetserver'],
   }
 
-  #file { '/etc/puppet/manifests/nodes.pp':
-  #  ensure  => link,
-  #  target  => '/vagrant/nodes.pp',
-  #  require => Package[ 'puppetserver' ],
-  #}
-  #
-  ## initialize a template file then ignore
-  #file { '/vagrant/nodes.pp':
-  #  ensure  => present,
-  #  replace => false,
-  #  source  => 'puppet:///modules/puppet/nodes.pp',
-  #}
-
+  exec { 'change puppet memory usage':
+    command => '/bin/sed -i "s/2g/256m/g" /etc/default/puppetserver',
+    unless => '/bin/grep -q "-Xms256m -Xmx256m" /etc/default/puppetserver',
+    require => Package['puppetserver']
+  }
   service { 'puppetserver':
     enable => true,
     ensure => running,
+    require => [Package['puppetserver'], File['/etc/puppet/puppet.conf'], File['/etc/puppet/autosign.conf'], Exec['change puppet memory usage']]
   }
 }
