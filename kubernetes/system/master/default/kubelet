@@ -1,1 +1,0 @@
-KUBELET_OPTS="--v=3 --enable-load-reader --ir-influxdb-host=master:8086 --api-servers=http://master:8080 --allow-privileged=true --register-node=true --config=/etc/kubernetes/manifests --logtostderr=true --cluster-domain=cluster.local --cluster-dns=10.254.10.10"

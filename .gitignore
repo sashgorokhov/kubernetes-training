@@ -1,3 +1,2 @@
 .vagrant
-.idea
-kubernetes/release/*
+puppet/modules/releases/files/*
