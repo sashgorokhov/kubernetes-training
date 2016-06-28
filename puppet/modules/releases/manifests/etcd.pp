@@ -8,5 +8,9 @@ class releases::etcd inherits releases::params {
     download_url => $etcd_url,
     tarname => $etcd_tarname,
     extracted => $etcd_release,
+  }~>
+  releases::binary {'etcd binaries':
+    names => ['etcd', 'etcdctl'],
+    source => 'puppet:///modules/releases/releases/etcd-v2.3.6-linux-amd64/'
   }
 }

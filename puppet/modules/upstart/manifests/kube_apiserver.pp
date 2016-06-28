@@ -1,6 +1,6 @@
 
 
-class upstart::kube-apiserver {
+class upstart::kube_apiserver {
   file {'/etc/default/kube-apiserver':
     ensure => file,
     source => 'puppet:///modules/upstart/kube-apiserver'

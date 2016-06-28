@@ -1,6 +1,6 @@
 
 
-class upstart::kube-proxy {
+class upstart::kube_proxy {
   file {'/etc/default/kube-proxy':
     ensure => file,
     source => 'puppet:///modules/upstart/kube-proxy'

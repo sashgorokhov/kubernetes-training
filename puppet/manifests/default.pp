@@ -2,31 +2,18 @@
 stage { 'pre': before => Stage['main'] }
 
 class {'puppet::hosts': stage => 'pre'}
-class {'puppet':        stage => 'pre'}
 
-if $hostname == 'puppet' {
-  class {'puppet::server':
-    require => Class['puppet::hosts']
-  }
-  class {'releases':}
-  class {'releases::etcd-binaries':
-    require => Class['releases::etcd']
-  }
+package {'bridge-utils':
+  ensure => present
 }
 
-node puppet {}
-
-include ::releases
-
-class {'releases-binaries':
-  require => Class['releases::']
-}
+class {'releases':}
 
 file {'/etc/bash.bashrc':
   ensure => file
 }
 
-node node1, node2 {
+if $hostname != 'master' {
   file_line {'kubectl to master':
     ensure => present,
     path => '/etc/bash.bashrc',
@@ -44,78 +31,78 @@ file_line {'kubectl-system':
 
 
 class {'upstart':
-  require => Class['releases-binaries']
+  require => Class['releases']
 }
 
-package {'bridge-utils':
-  ensure => present
-}
-
-if $hostname == 'puppet' {
-  class {'upstart-master':
-    require => Class['releases-binaries']
+if $hostname == 'master' {
+  class { 'upstart::master':
+    require => Class['releases']
   }->
-  service {'etcd':
+  service { 'etcd':
     ensure => running,
-    enable => true,
+    enable => true
   }~>
-  exec {'wait etcd to start':
-    command => '/bin/sleep 8s',
+  exec { 'wait etcd to start':
+    command     => '/bin/sleep 8s',
     refreshonly => true
   }
 
-  file {'/etc/flannel':
+  file { '/etc/flannel':
     ensure => directory
   }->
-  file {'/etc/flannel/flannel-config.json':
+  file { '/etc/flannel/flannel-config.json':
     ensure => file,
     source => 'puppet:///modules/upstart/flannel-config.json'
   }->
-  exec {'insert flannel configs to etcd':
+  exec { 'insert flannel configs to etcd':
     command => '/usr/bin/etcdctl set /coreos.com/network/config < /etc/flannel/flannel-config.json',
-    unless => '/usr/bin/etcdctl get /coreos.com/network/config',
+    unless  => '/usr/bin/etcdctl get /coreos.com/network/config',
     require => Service['etcd'],
   }->
-  service {'flanneld':
+  service { 'flanneld':
     ensure => running,
-    enable => true
+    enable => true,
+    require => Class['upstart']
   }
 } else {
   service {'flanneld':
     ensure => running,
     enable => true,
-    require => Class['releases-binaries']
+    require => Class['upstart']
   }
 }
 
-class {'docker':
-  require => Service['flanneld']
-}
 
-if $hostname == 'puppet' {
-  service {'kube-apiserver':
-    ensure => running,
-    enable => true,
-    require => Class['docker']
-  }->
-  exec {'label master node':
-    command => '/bin/sleep 5s && /usr/bin/kubectl label nodes puppet --overwrite node=master',
-    unless => '/usr/bin/kubectl get no -l node=master | /bin/grep -q master',
-  }
-
-  #class {'heapster':
-  #  require => Class['releases::heapster']
-  #}
-
-}
-
-service {'kubelet':
-  ensure => running,
-  enable => true,
-  require => Class['docker']
-}
-service {'kube-proxy':
-  ensure => running,
-  enable => true,
-  require => Class['docker']
-}
+#
+#class {'docker':
+#  require => Service['flanneld']
+#}
+#
+#if $hostname == 'puppet' {
+#  service {'kube-apiserver':
+#    ensure => running,
+#    enable => true,
+#    require => Class['docker']
+#  }->
+#  exec {'label master node':
+#    command => '/bin/sleep 5s && /usr/bin/kubectl label nodes puppet --overwrite node=master',
+#    unless => '/usr/bin/kubectl get no -l node=master | /bin/grep -q master',
+#  }
+#
+#  #class {'heapster':
+#  #  require => Class['releases::heapster']
+#  #}
+#
+#}
+#
+#service {'kubelet':
+#  ensure => running,
+#  enable => true,
+#  require => Class['docker']
+#}
+#service {'kube-proxy':
+#  ensure => running,
+#  enable => true,
+#  require => Class['docker']
+#}
+#

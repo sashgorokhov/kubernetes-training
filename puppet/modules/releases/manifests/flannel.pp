@@ -8,5 +8,9 @@ class releases::flannel inherits releases::params {
     download_url => $flannel_url,
     tarname => $flannel_tarname,
     extracted => $flannel_release,
+  }~>
+  releases::binary {'flannel binaries':
+    names => ['flanneld'],
+    source => 'puppet:///modules/releases/releases/flannel-0.5.5-linux-amd64/'
   }
 }

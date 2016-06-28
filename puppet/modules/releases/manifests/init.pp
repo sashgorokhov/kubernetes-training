@@ -6,8 +6,3 @@ class releases {
   class {'releases::flannel': }
   class {'releases::heapster':}
 }
-
-class releases-binaries {
-  class {'releases::kubernetes-binaries':}
-  class {'releases::flannel-binaries': }
-}
