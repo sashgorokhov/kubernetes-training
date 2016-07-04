@@ -16,6 +16,8 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: Default
+      nodeSelector:
+        node: master
       containers:
         - name: kube2sky
           image: gcr.io/google_containers/kube2sky:1.14

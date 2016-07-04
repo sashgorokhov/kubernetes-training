@@ -9,11 +9,11 @@ class releases::kubernetes inherits releases::params {
     download_url => $kubernetes_url,
     tarname      => $kubernetes_tarname,
     extracted    => $kubernetes_release
-  }~>
+  }->
   exec { 'extract kubernetes binaries':
     command => "/bin/tar -C ${kubernetes_release} --strip-components 1 -xzf ${kubernetes_release}/server/kubernetes-server-linux-amd64.tar.gz",
     creates => $kubernetes_bin_dir
-  }~>
+  }->
   releases::binary {'kubernetes binaries':
     names => ['hyperkube', 'kubectl'],
     source => 'puppet:///modules/releases/releases/kubernetes-v1.3.0-beta.1/server/bin/'

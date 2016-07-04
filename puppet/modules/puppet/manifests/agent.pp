@@ -25,14 +25,14 @@ class puppet::agent {
   #  before => Service['puppet']
   #}
 
-  file_line {'create main section':
+  file_line {'create agent section':
     line => '[agent]',
     path => '/etc/puppetlabs/puppet/puppet.conf',
     ensure => present
   }->
   file_line {'set runinterval':
-    after => '[agent]',
-    line => 'runinterval = 1m',
+    after => '\[agent\]',
+    line => 'runinterval = 5m',
     path => '/etc/puppetlabs/puppet/puppet.conf',
     ensure => present,
   }->

@@ -20,9 +20,12 @@ class puppet::server {
   }
 
   exec { 'change puppet memory usage':
-    command => '/bin/sed -i "s/2g/256m/g" /etc/default/puppetserver',
-    unless => '/bin/grep -q "\-Xms256m \-Xmx256m" /etc/default/puppetserver',
+    command => '/bin/sed -i "s/2g/1g/g" /etc/default/puppetserver',
+    unless => '/bin/grep -q "\-Xms1g \-Xmx1g" /etc/default/puppetserver',
     require => Package['puppetserver']
+  }->
+  exec {'start puppetserver':
+    command => '/usr/sbin/service puppetserver start'
   }->
   service { 'puppetserver':
     enable => true,

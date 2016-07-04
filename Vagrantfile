@@ -37,7 +37,7 @@ Vagrant.configure(2) do |config|
 
     config.vm.define "puppet" do |puppet|
         puppet.vm.provider "virtualbox" do |v|
-          v.memory = 512
+          v.memory = 2048
           v.cpus = 1
         end
         puppet.vm.synced_folder "puppet/manifests", "/etc/puppetlabs/code/environments/production/manifests"
@@ -56,6 +56,9 @@ Vagrant.configure(2) do |config|
             node.vm.provider "virtualbox" do |v|
                 v.memory = node_config[:hostname] == 'master' ? 4096 : 1024
                 v.cpus = node_config[:hostname] == 'master' ? 2 : 1
+            end
+            if node_config[:hostname] == 'master'
+                node.vm.synced_folder "kubernetes/manifests", "/etc/kubernetes/manifests"
             end
             #node.vm.provision "shell", inline: <<-SHELL
             #SHELL

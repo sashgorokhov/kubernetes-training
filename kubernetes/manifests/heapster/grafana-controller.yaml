@@ -15,6 +15,8 @@ spec:
         name: monitoring-grafana
     spec:
       hostNetwork: true
+      nodeSelector:
+        node: master
       containers:
       - name: monitoring-grafana
         image: master:5000/grafana
