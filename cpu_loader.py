@@ -1,4 +1,7 @@
-import deco
+try:
+    import deco
+except ImportError:
+    print('Package "deco" is not installed.\nInstall it:\npip install deco')
 import requests
 import sys
 

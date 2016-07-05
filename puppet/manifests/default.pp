@@ -91,10 +91,10 @@ if $hostname == 'master' {
     enable => true,
     require => [Service['etcd'], Class['releases::kubernetes']]
   }
-  class {'releases::heapster':}->
-  class {'heapster':
-    require => Class['docker::registry']
-  }
+  class {'releases::heapster':}
+  #class {'heapster':
+  #  require => Class['docker::registry']
+  #}
 }
 
 class {'upstart::kube_proxy':}->

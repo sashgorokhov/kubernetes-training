@@ -1,1 +1,1 @@
-KUBE_PROXY_OPTS="--master http://master:8080 --v=4"
+KUBE_PROXY_OPTS="--master http://master:8080 --v=4 --masquerade-all=true"
