@@ -1,34 +1,42 @@
 # sudo /opt/puppetlabs/bin/puppet apply --debug --modulepath=/vagrant/puppet/modules /vagrant/puppet/manifests/default.pp
 
-stage { 'pre': before => Stage['main'] }
+#stage { 'pre': before => Stage['main'] }
 
-class {'puppet::hosts': stage => 'pre'}
+class {'puppet::hosts':}
+
+->
+class {'certs::ca':}->
+class {'certs::node':}
+
 
 package {'bridge-utils':
   ensure => present
 }
 
-file {'/etc/bash.bashrc':
-  ensure => file
-}
+#file {'/etc/bash.bashrc':
+#  ensure => file
+#}
 
-if $hostname != 'master' {
-  file_line {'kubectl to master':
-    ensure => present,
-    path => '/etc/bash.bashrc',
-    line   => 'alias kubectl="kubectl --server http://master:8080"',
-    require => File['/etc/bash.bashrc']
-  }
-}
-
-file_line {'kubectl-system':
-  ensure => present,
-  path => '/etc/bash.bashrc',
-  line   => 'alias kubectl-system="kubectl --namespace=kube-system"',
-  require => File['/etc/bash.bashrc']
-}
+#if $hostname != 'master' {
+#  file_line {'kubectl to master':
+#    ensure => present,
+#    path => '/etc/bash.bashrc',
+#    line   => 'alias kubectl="kubectl --server http://master:8080"',
+#    require => File['/etc/bash.bashrc']
+#  }
+#}
+#
+#file_line {'kubectl-system':
+#  ensure => present,
+#  path => '/etc/bash.bashrc',
+#  line   => 'alias kubectl-system="kubectl --namespace=kube-system"',
+#  require => File['/etc/bash.bashrc']
+#}
 
 if $hostname == 'master' {
+  class {'certs::apiserver':
+    require => Class['certs::ca']
+  }
   class {'upstart::etcd':}
   class {'releases::etcd':}
   service { 'etcd':
@@ -79,38 +87,43 @@ class {'docker':
   require => [Service['flanneld'], Class['upstart::docker']]
 }
 
-class {'releases::kubernetes':}
+class {'releases::kubernetes':}->
+exec {'create kubeconfig':
+  command => "/bin/bash /vagrant/kubernetes/create-kubeconfig.sh",
+  require => [Class['certs::apiserver'], Class['certs::node']],
+  unless => "/usr/bin/test -f /vagrant/kubernetes/kubeconfig"
+}
 
 if $hostname == 'master' {
   class {'docker::registry':
     require => Class['docker']
   }
-  class {'upstart::kube_apiserver':}
-  service {'kube-apiserver':
-    ensure => running,
-    enable => true,
-    require => [Service['etcd'], Class['releases::kubernetes']]
-  }
-  class {'releases::heapster':}
+  #class {'upstart::kube_apiserver':}
+  #service {'kube-apiserver':
+  #  ensure => running,
+  #  enable => true,
+  #  require => [Service['etcd'], Class['releases::kubernetes']]
+  #}
+  #class {'releases::heapster':}
   #class {'heapster':
   #  require => Class['docker::registry']
   #}
 }
 
-class {'upstart::kube_proxy':}->
-service {'kube-proxy':
-  ensure => running,
-  enable => true,
-  require => Class['releases::kubernetes']
-}
-
-class {'upstart::kubelet':}->
-service {'kubelet':
-  ensure => running,
-  enable => true,
-  require => [Class['releases::kubernetes'], Class['docker']]
-}->
-exec {'label node':
-  command => "/usr/bin/kubectl --server http://master:8080 label nodes ${hostname} --overwrite node=${hostname}",
-  unless => "/usr/bin/kubectl --server http://master:8080 get no -l node=${hostname} | /bin/grep -q ${hostname}",
-}
+#class {'upstart::kube_proxy':}->
+#service {'kube-proxy':
+#  ensure => running,
+#  enable => true,
+#  require => Class['releases::kubernetes']
+#}
+#
+#class {'upstart::kubelet':}->
+#service {'kubelet':
+#  ensure => running,
+#  enable => true,
+#  require => [Class['releases::kubernetes'], Class['docker']]
+#}->
+#exec {'label node':
+#  command => "/usr/bin/kubectl --server http://master:8080 label nodes ${hostname} --overwrite node=${hostname}",
+#  unless => "/usr/bin/kubectl --server http://master:8080 get no -l node=${hostname} | /bin/grep -q ${hostname}",
+#}

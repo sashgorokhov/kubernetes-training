@@ -1,0 +1,1 @@
+sudo  hyperkube kubelet --v=4 --serialize-image-pulls=false --node-ip=$2 --master-service-namespace="kube-system" --api-servers https://master.example.com --allow-privileged --hostname_override $1 --kubeconfig /vagrant/kubernetes/kubeconfig --tls-cert-file /vagrant/kubernetes/ssl/$1.pem --tls-private-key-file /vagrant/kubernetes/ssl/$1-key.pem
