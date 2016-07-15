@@ -1,1 +1,24 @@
-KUBELET_OPTS="--v=3 --api-servers=http://master:8080 --allow-privileged=true --register-node=true --config=/etc/kubernetes/manifests --logtostderr=true --cluster-domain=cluster.local --cluster-dns=10.10.10.10 --node-ip=NODE_IP"
+set -ex
+if [ -f /etc/kubernetes/ssl/apiserver.pem ]; then
+    CONFIG_DIR=/etc/kubernetes/shared/manifests/master
+else
+    CONFIG_DIR=/etc/kubernetes/shared/manifests/node
+fi
+set +ex
+KUBELET_OPTS="--v=3
+--api-servers=https://master.example.com
+--allow-privileged
+--serialize-image-pulls=false
+--master-service-namespace=kube-system
+--register-node=true
+--config=$CONFIG_DIR
+--logtostderr
+--alsologtostderr
+--enable-load-reader
+--experimental-flannel-overlay
+--cluster-domain=cluster.local
+--cluster-dns=10.10.0.10
+--kubeconfig=/etc/kubernetes/shared/kubeconfig
+--tls-cert-file=/etc/kubernetes/ssl/node.pem
+--tls-private-key-file=/etc/kubernetes/ssl/node-key.pem
+--node-ip=NODE_IP"

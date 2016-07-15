@@ -30,8 +30,13 @@ spec:
               memory: 50Mi
           args:
             - --domain=cluster.local
-            - --kube-master-url=http://master:8080
-            - --etcd-server=http://master:4001
+            - --etcd-server=http://master.example.com:4001
+            - --kubecfg-file=/etc/kubernetes/shared/kubeconfig
+          volumeMounts:
+          - mountPath: /etc/kubernetes
+            name: kubernetes-confdir
+          - mountPath: /etc/ssl/certs
+            name: ssl-certs-host
         - name: skydns
           image: gcr.io/google_containers/skydns:2015-10-13-8c72f8c
           resources:
@@ -42,9 +47,8 @@ spec:
               cpu: 100m
               memory: 50Mi
           args:
-            - --machines=http://master:4001
+            - --machines=http://master.example.com:4001
             - --addr=0.0.0.0:53
-            - --ns-rotate=false
             - --domain=cluster.local.
           ports:
           - containerPort: 53
@@ -53,3 +57,10 @@ spec:
           - containerPort: 53
             name: dns-tcp
             protocol: TCP
+      volumes:
+      - hostPath:
+          path: /etc/kubernetes
+        name: kubernetes-confdir
+      - hostPath:
+          path: /usr/share/ca-certificates
+        name: ssl-certs-host

@@ -2,23 +2,21 @@ apiVersion: v1
 kind: ReplicationController
 metadata:
   labels:
-    name: monitoring-grafana
-  name: monitoring-grafana
+    name: grafana-monitoring
+  name: grafana-monitoring
   namespace: kube-system
 spec:
   replicas: 1
   selector:
-    name: monitoring-grafana
+    name: grafana-monitoring
   template:
     metadata:
       labels:
-        name: monitoring-grafana
+        name: grafana-monitoring
     spec:
-      hostNetwork: true
-      nodeSelector:
-        node: master
+      #hostNetwork: true
       containers:
-      - name: monitoring-grafana
+      - name: grafana-monitoring
         image: master:5000/grafana
         env:
           - name: INFLUXDB_SERVICE_URL
@@ -29,8 +27,8 @@ spec:
             value: "true"
           - name: GF_AUTH_ANONYMOUS_ORG_ROLE
             value: Admin
-          #- name: GF_SERVER_ROOT_URL
-          #  value: /api/v1/proxy/namespaces/default/services/grafana-monitoring/
+          - name: GF_SERVER_ROOT_URL
+            value: /api/v1/proxy/namespaces/kube-system/services/grafana-monitoring/
         volumeMounts:
         - mountPath: /var
           name: grafana-storage

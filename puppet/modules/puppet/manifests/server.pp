@@ -32,4 +32,9 @@ class puppet::server {
     ensure => running,
     require => [Package['puppetserver'], File['/etc/puppetlabs/puppet/autosign.conf']]
   }
+
+  service { 'puppet':
+    enable  => false,
+    require => Package['puppet-agent'],
+  }
 }

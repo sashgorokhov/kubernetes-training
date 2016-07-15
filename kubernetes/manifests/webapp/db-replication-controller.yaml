@@ -28,8 +28,6 @@ spec:
             limits:
               memory: "200Mi"
               cpu: "400m"
-      nodeSelector:
-        node: master
       volumes:
       - name: "db-data"
         hostPath:

@@ -1,0 +1,49 @@
+---
+  kind: Pod
+  apiVersion: v1
+  metadata:
+    name: kube-apiserver
+    namespace: kube-system
+  spec:
+    hostNetwork: true
+    containers:
+      - name: "kube-apiserver"
+        image: gcr.io/google_containers/hyperkube:v1.3.0
+        command:
+          - /hyperkube
+          - apiserver
+          - --v=3
+          - --admission-control=NamespaceLifecycle,LimitRanger,ResourceQuota
+          - --etcd_servers=http://master.example.com:2379
+          - --allow-privileged=true
+          - --service-cluster-ip-range=10.10.0.0/16
+          - --alsologtostderr
+          - --logtostderr
+          - --enable-load-reader
+          - --secure-port=443
+          - --master-service-namespace="kube-system"
+          - --advertise-address=172.16.32.10 # TODO: configure this dynamically
+          - --insecure-bind-address=0.0.0.0 # remove if running in production
+          - --kubelet-certificate-authority=/etc/kubernetes/shared/ssl/ca.pem
+          - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
+          - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+          - --client-ca-file=/etc/kubernetes/shared/ssl/ca.pem
+        ports:
+        - containerPort: 443
+          hostPort: 443
+          name: https
+        - containerPort: 8080
+          hostPort: 8080
+          name: local
+        volumeMounts:
+        - mountPath: /etc/kubernetes
+          name: kubernetes-confdir
+        - mountPath: /etc/ssl/certs
+          name: ssl-certs-host
+    volumes:
+    - hostPath:
+        path: /etc/kubernetes
+      name: kubernetes-confdir
+    - hostPath:
+        path: /usr/share/ca-certificates
+      name: ssl-certs-host

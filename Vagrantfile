@@ -54,9 +54,7 @@ Vagrant.configure(2) do |config|
                 v.memory = node_config[:hostname] == 'master' ? 4096 : 1024
                 v.cpus = node_config[:hostname] == 'master' ? 2 : 1
             end
-            if node_config[:hostname] == 'master'
-                node.vm.synced_folder "kubernetes/manifests", "/etc/kubernetes/manifests"
-            end
+            node.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
         end
     end
 end

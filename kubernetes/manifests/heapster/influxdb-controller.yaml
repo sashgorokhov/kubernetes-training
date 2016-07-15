@@ -14,9 +14,7 @@ spec:
       labels:
         name: influxdb
     spec:
-      hostNetwork: true
-      nodeSelector:
-        node: master
+      #hostNetwork: true
       containers:
       - name: influxdb
         image: master:5000/influxdb

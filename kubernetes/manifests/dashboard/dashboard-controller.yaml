@@ -21,11 +21,11 @@ spec:
         kubernetes.io/cluster-service: "true"
     spec:
       hostNetwork: true
-      nodeSelector:
-        node: master
       containers:
       - name: kubernetes-dashboard
         image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.0.1
+        args:
+          - --apiserver-host=http://master.example.com:8080
         resources:
           # keep request = limit to keep this container in guaranteed class
           limits:

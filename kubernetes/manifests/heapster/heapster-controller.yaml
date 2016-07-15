@@ -14,14 +14,12 @@ spec:
       labels:
         name: heapster
     spec:
-      hostNetwork: true
-      nodeSelector:
-        node: master
+      #hostNetwork: true
       containers:
       - name: heapster
         image: gcr.io/google_containers/heapster:v1.1.0
         command:
         - /heapster
-        - --source=kubernetes:http://master:8080?inClusterConfig=false
-        - --sink=influxdb:http://master:8086
+        - --source=kubernetes:https://master.example.com
+        - --sink=influxdb:http://master.example.com:8086
         - --v=4

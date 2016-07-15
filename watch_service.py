@@ -17,7 +17,7 @@ print('URL: ' + URL)
 
 print('Getting pods...')
 try:
-    output = subprocess.check_output("kubectl --server=http://master:8080 get po -o json", shell=True)
+    output = subprocess.check_output("kubectl --kubeconfig=/vagrant/kubernetes/kubeconfig get po -o json", shell=True)
 except subprocess.CalledProcessError as e:
     print(e)
     print(e.output)
