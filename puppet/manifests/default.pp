@@ -94,20 +94,21 @@ exec {'create kubeconfig':
   unless => "/usr/bin/test -f /etc/kubernetes/shared/kubeconfig"
 }
 
-if $hostname == 'master' {
-  class {'docker::registry':
-    require => Class['docker']
-  }
-  class {'releases::heapster':}
-  class {'heapster':
-    require => Class['docker::registry']
-  }
-}
-
 
 class {'upstart::kubelet':}->
 service {'kubelet':
   ensure => running,
   enable => true,
   require => [Class['releases::kubernetes'], Class['docker']]
+}
+
+
+if $hostname == 'master' {
+  class {'docker::registry':
+    require => Class['docker']
+  }->
+  class {'releases::heapster':}->
+  class {'heapster':
+    require => Class['upstart::kubelet']
+  }
 }

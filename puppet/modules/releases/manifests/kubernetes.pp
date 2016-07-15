@@ -1,8 +1,9 @@
 
 class releases::kubernetes inherits releases::params {
-  $kubernetes_url = 'https://github.com/kubernetes/kubernetes/releases/download/v1.3.0-beta.1/kubernetes.tar.gz'
-  $kubernetes_tarname = "${downloads_dir}/kubernetes-v1.3.0-beta.1.tar.gz"
-  $kubernetes_release = "${releases_dir}/kubernetes-v1.3.0-beta.1"
+  $kubernetes_url = 'https://github.com/kubernetes/kubernetes/releases/download/v1.3.0/kubernetes.tar.gz'
+  $kubernetes_release_name = "kubernetes-v1.3.0"
+  $kubernetes_tarname = "${downloads_dir}/${kubernetes_release_name}.tar.gz"
+  $kubernetes_release = "${releases_dir}/${kubernetes_release_name}"
   $kubernetes_bin_dir = "${kubernetes_release}/server/bin"
 
   downloader { 'get kubernetes':
@@ -16,6 +17,6 @@ class releases::kubernetes inherits releases::params {
   }->
   releases::binary {'kubernetes binaries':
     names => ['hyperkube', 'kubectl'],
-    source => 'puppet:///modules/releases/releases/kubernetes-v1.3.0-beta.1/server/bin/'
+    source => "puppet:///modules/releases/releases/${kubernetes_release_name}/server/bin/"
   }
 }

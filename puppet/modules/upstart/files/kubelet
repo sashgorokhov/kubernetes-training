@@ -4,7 +4,9 @@ if [ -f /etc/kubernetes/ssl/apiserver.pem ]; then
 else
     CONFIG_DIR=/etc/kubernetes/shared/manifests/node
 fi
+
 set +ex
+
 KUBELET_OPTS="--v=3
 --api-servers=https://master.example.com
 --allow-privileged
