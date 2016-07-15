@@ -13,7 +13,6 @@ spec:
         stolon-cluster: "kube-stolon"
         stolon-keeper: "true"
     spec:
-      hostNetwork: true
       containers:
       - name: stolon-keeper
         image: sorintlab/stolon:v0.2.0
@@ -24,7 +23,7 @@ spec:
           # TODO(sgotti) Get cluster name from "stoloncluster" label using a downward volume api instead of duplicating the name here
             value: "kube-stolon"
           - name: STKEEPER_ETCD_ENDPOINTS
-            value: "http://master:4001"
+            value: "http://172.16.32.10:2379"
             # Enable debugging
           - name: STKEEPER_DEBUG
             value: "true"

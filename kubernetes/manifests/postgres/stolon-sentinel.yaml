@@ -13,7 +13,6 @@ spec:
         stolon-cluster: "kube-stolon"
         stolon-sentinel: "true"
     spec:
-      hostNetwork: true
       containers:
       - name: stolon-sentinel
         image: sorintlab/stolon:v0.2.0
@@ -23,7 +22,7 @@ spec:
           - name: STSENTINEL_CLUSTER_NAME
             value: "kube-stolon"
           - name: STSENTINEL_ETCD_ENDPOINTS
-            value: "http://master:4001"
+            value: "http://172.16.32.10:2379"
           - name: STSENTINEL_KEEPER_KUBE_LABEL_SELECTOR
             value: "stolon-cluster=kube-stolon,stolon-keeper=true"
             # Enable debugging

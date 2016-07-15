@@ -5,7 +5,7 @@ metadata:
 spec:
   ports:
     - port: 5432
-      name: stolon-proxy
+      targetPort: 5432
   selector:
     stolon-proxy: "true"
     stolon-cluster: "kube-stolon"
