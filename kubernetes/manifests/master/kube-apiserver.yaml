@@ -13,7 +13,7 @@
           - /hyperkube
           - apiserver
           - --v=3
-          - --admission-control=NamespaceLifecycle,LimitRanger,ResourceQuota
+          - --admission-control=NamespaceLifecycle,LimitRanger,ResourceQuota,ServiceAccount
           - --etcd_servers=http://master.example.com:2379
           - --allow-privileged=true
           - --service-cluster-ip-range=10.10.0.0/16
