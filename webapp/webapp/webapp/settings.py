@@ -83,6 +83,16 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 #}
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'HOST': os.environ.get('STOLON_PROXY_SERVICE_SERVICE_HOST'),
+#         'PASSWORD': 'foo',
+#         'USER': 'stolon'
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
