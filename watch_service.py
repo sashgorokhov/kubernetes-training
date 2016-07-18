@@ -16,15 +16,18 @@ start = time.time()
 print('URL: ' + URL)
 
 print('Getting pods...')
+
+pod_list = []
+
 try:
     output = subprocess.check_output("kubectl --kubeconfig=/vagrant/kubernetes/kubeconfig get po -o json", shell=True)
 except subprocess.CalledProcessError as e:
     print(e)
     print(e.output)
-    exit(1)
-output = json.loads(output)
-output = output.get('items', [])
-pod_list = [(p['metadata']['name'], p['spec']['nodeName']) for p in output]
+else:
+    output = json.loads(output)
+    output = output.get('items', [])
+    pod_list = [(p['metadata']['name'], p['spec']['nodeName']) for p in output]
 
 while True:
     st = time.time()
