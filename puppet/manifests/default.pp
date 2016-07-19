@@ -110,5 +110,6 @@ if $hostname == 'master' {
   class {'releases::heapster':}->
   class {'heapster':
     require => Class['upstart::kubelet']
-  }
+  }->
+  class {'releases::stolon':}
 }
