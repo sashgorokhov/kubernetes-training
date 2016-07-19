@@ -38,7 +38,5 @@ kubectl scale rc/stolon-proxy-rc --replicas=3
 kubectl scale rc/stolon-keeper-rc --replicas=3
 ```
 
-After scaling, stolon keepers will connect to current postgres master in standby mode and start to replicate data.
+After scaling, stolon keepers will connect to current postgres master in hot standby mode and start to replicate data.
 
-
-Currently only warm standby is available.
