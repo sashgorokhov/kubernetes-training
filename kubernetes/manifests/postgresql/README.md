@@ -19,6 +19,10 @@ kubectl create -f /vagrant/kubernetes/manifests/postgresql/stolon-keeper.yaml
 ```shell
 kubectl exec -it $(kubectl get po | grep stolon-keeper-rc | awk '{print $1}') -- psql -h localhost -U stolon -d postgres -c "ALTER ROLE stolon WITH PASSWORD 'stolon';"
 ```
+Optionally create database:
+```shell
+kubectl exec -it $(kubectl get po | grep stolon-keeper-rc | awk '{print $1}') -- psql -h localhost -U stolon -d postgres -c "CREATE DATABASE stolon OWNER stolon;"
+```
 
 4) Start stolon proxy and proxy service
 ```shell
