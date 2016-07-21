@@ -11,6 +11,11 @@ spec:
       containers:
         - name: webapp
           image: master:5000/webapp
+          env:
+            - name: POSTGRES_USER
+              value: webapp
+            - name: POSTGRES_HOST_ENV_NAME
+              value: DB_SERVICE_SERVICE_HOST
           ports:
             - containerPort: 80
           resources:

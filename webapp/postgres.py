@@ -1,18 +1,22 @@
 import os
 from contextlib import contextmanager
 
-import bottle
-import time
 import psycopg2
+
+POSTGRES_DEFAULT_USER = 'stolon'
+
+POSTGRES_CONFIG = dict(user=os.environ.get('POSTGRES_USER', POSTGRES_DEFAULT_USER),
+                       password=os.environ.get('POSTGRES_PASSWORD', os.environ.get('POSTGRES_USER', POSTGRES_DEFAULT_USER)),
+                       host=os.environ.get(os.environ.get('POSTGRES_HOST_ENV_NAME', 'POSTGRES_HOST')),
+                       database=os.environ.get('POSTGRES_DATABASE', os.environ.get('POSTGRES_USER', POSTGRES_DEFAULT_USER)))
+
+print('Using config: {}'.format(POSTGRES_CONFIG))
 
 
 @contextmanager
-def connection(user=None, password=None, host=None, database=None):
+def connection():
     """:rtype: psycopg2.extensions.connection"""
-    conn = psycopg2.connect(user=user or os.environ.get('POSTGRES_USER'),
-                            password=password or os.environ.get('POSTGRES_PASSWORD'),
-                            host=host or os.environ.get(os.environ.get('POSTGRES_HOST_ENV_NAME', 'POSTGRES_HOST')),
-                            database=database or os.environ.get('POSTGRES_DATABASE', os.environ.get('POSTGRES_USER')))
+    conn = psycopg2.connect(**POSTGRES_CONFIG)
     """:type: psycopg2.extensions.connection"""
     try:
         yield conn
@@ -21,7 +25,7 @@ def connection(user=None, password=None, host=None, database=None):
 
 
 @contextmanager
-def cursor(connection):
+def cursor(connection, autocommit=True):
     """
     :param psycopg2.extensions.connection connection:
     :rtype: psycopg2.extensions.cursor
@@ -31,6 +35,8 @@ def cursor(connection):
         yield cursor
     finally:
         cursor.close()
+    if autocommit:
+        connection.commit()
 
 
 @contextmanager
@@ -53,29 +59,12 @@ def list_tables():
         return [i[0] for i in curr.fetchall()]
 
 
-@bottle.get('/')
-def index():
-    return '<br>\n'.join('%s: %s' % (k, v) for k, v in sorted(os.environ.items(), key=lambda i: i[0]))
-
-
-@bottle.get('/health')
-def health():
-    return 'OK ' + os.environ.get('HOSTNAME', 'unknown')
-
-
-@bottle.get('/cpu_usage')
-def cpu_usage():
-    start = time.time()
-    while True:
-        if time.time() - start > 10.0:
-            break
-        time.time() ** 2
-    return '{:.1f}s '.format(time.time() - start) + os.environ.get('HOSTNAME', 'unknown')
-
-
-def main():
-    bottle.run(host='0.0.0.0', port=8080)
-
+def check_db():
+    with connection():
+        pass
 
 if __name__ == '__main__':
-    main()
+    import pprint
+
+    pprint.pprint(list_databases())
+    pprint.pprint(list_tables())

@@ -26,7 +26,5 @@ spec:
           - name: STSENTINEL_KEEPER_KUBE_LABEL_SELECTOR
             value: "stolon-cluster=kube-stolon,stolon-keeper=true"
             # Enable debugging
-          - name: STSENTINEL_DEBUG
-            value: "true"
         ports:
           - containerPort: 6431
