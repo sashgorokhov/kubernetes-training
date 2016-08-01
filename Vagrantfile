@@ -15,14 +15,15 @@ nodes = [
 # if, while provisioning with puppet you getting errors like "Could not evaluate: undefined method `exist?'", then simply re-run provision.
 
 Vagrant.configure(2) do |config|
-    config.vm.box = "sashgorokhov/trusty64-updated-kernel"
+    config.vm.box = "bento/ubuntu-16.04"
+    config.vm.synced_folder ".", "/vagrant" # foo
 
     config.vm.provision "shell", name: "Install puppet", inline: <<-SHELL
         set -ex
-        if [ ! -f /home/vagrant/puppetlabs-release-pc1-trusty.deb ]; then
+        if [ ! -f /home/vagrant/puppetlabs-release-pc1-xenial.deb ]; then
             cd /home/vagrant
-            wget https://apt.puppetlabs.com/puppetlabs-release-pc1-trusty.deb
-            dpkg -i puppetlabs-release-pc1-trusty.deb
+            wget https://apt.puppetlabs.com/puppetlabs-release-pc1-xenial.deb
+            dpkg -i puppetlabs-release-pc1-xenial.deb
             apt-get update -qq
         fi
         apt-get autoremove -qqy
