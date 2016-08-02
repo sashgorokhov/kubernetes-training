@@ -13,18 +13,18 @@ spec:
           image: master:5000/webapp
           env:
             - name: POSTGRES_USER
-              value: webapp
+              value: stolon
             - name: POSTGRES_HOST_ENV_NAME
-              value: DB_SERVICE_SERVICE_HOST
+              value: STOLON_PROXY_SERVICE_SERVICE_HOST
           ports:
             - containerPort: 80
           resources:
             requests:
-              memory: "100Mi"
-              cpu: "200m"
+              memory: "50Mi"
+              cpu: "50m"
             limits:
-              memory: "200Mi"
-              cpu: "400m"
+              memory: "100Mi"
+              cpu: "100m"
           livenessProbe:
             httpGet:
               path: /health
@@ -40,4 +40,4 @@ spec:
     metadata:
       labels:
         name: webapp
-        uses: db
+        #uses: db

@@ -15,7 +15,7 @@ nodes = [
 # if, while provisioning with puppet you getting errors like "Could not evaluate: undefined method `exist?'", then simply re-run provision.
 
 Vagrant.configure(2) do |config|
-    config.vm.box = "sashgorokhov/trusty64-updated-kernel"
+    config.vm.box = "ubuntu/trusty64"
 
     config.vm.provision "shell", name: "Install puppet", inline: <<-SHELL
         set -ex
@@ -55,6 +55,9 @@ Vagrant.configure(2) do |config|
                 v.cpus = node_config[:hostname] == 'master' ? 2 : 1
             end
             node.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
+            if node_config[:hostname] == 'master'
+                config.vm.network "forwarded_port", guest: 8080, host: 8080
+            end
         end
     end
 end
