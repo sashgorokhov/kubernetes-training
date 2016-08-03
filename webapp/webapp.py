@@ -34,6 +34,7 @@ def health():
 
 def request_wrapper(func):
     def wrapper(*args, **kwargs):
+        bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
         try:
             with cursor_only() as curr:
                 create_table(curr)

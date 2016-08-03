@@ -107,9 +107,9 @@ if $hostname == 'master' {
   class {'docker::registry':
     require => Class['docker']
   }->
-  class {'releases::heapster':}->
-  class {'heapster':
-    require => Class['upstart::kubelet']
-  }->
+  class {'releases::heapster':}#->
+  #class {'heapster':
+  #  require => Class['upstart::kubelet']
+  #}->
   class {'releases::stolon':}
 }

@@ -55,9 +55,9 @@ Vagrant.configure(2) do |config|
                 v.cpus = node_config[:hostname] == 'master' ? 2 : 1
             end
             node.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
-            if node_config[:hostname] == 'master'
-                config.vm.network "forwarded_port", guest: 8080, host: 8080
-            end
+            #if node_config[:hostname] == 'master'
+            #    config.vm.network "forwarded_port", guest: 8080, host: 8081
+            #end
         end
     end
 end
