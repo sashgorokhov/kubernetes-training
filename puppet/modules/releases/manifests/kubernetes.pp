@@ -1,7 +1,6 @@
-
 class releases::kubernetes inherits releases::params {
-  $kubernetes_url = 'https://github.com/kubernetes/kubernetes/releases/download/v1.3.0/kubernetes.tar.gz'
-  $kubernetes_release_name = "kubernetes-v1.3.0"
+  $kubernetes_url = 'https://github.com/kubernetes/kubernetes/releases/download/v1.3.4/kubernetes.tar.gz'
+  $kubernetes_release_name = "kubernetes-v1.3.4"
   $kubernetes_tarname = "${downloads_dir}/${kubernetes_release_name}.tar.gz"
   $kubernetes_release = "${releases_dir}/${kubernetes_release_name}"
   $kubernetes_bin_dir = "${kubernetes_release}/server/bin"
