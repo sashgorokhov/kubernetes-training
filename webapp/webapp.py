@@ -51,7 +51,7 @@ def cpu_usage():
     bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
     start = time.time()
     while True:
-        if time.time() - start > 10.0:
+        if time.time() - start > 1.0:
             break
         time.time() ** 2
     return '{:.1f}s '.format(time.time() - start) + os.environ.get('HOSTNAME', 'unknown')
