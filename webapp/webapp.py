@@ -20,11 +20,13 @@ def drop_table(curr):
 
 @bottle.get('/')
 def index():
+    bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
     return '<br>\n'.join('%s: %s' % (k, v) for k, v in sorted(os.environ.items(), key=lambda i: i[0]))
 
 
 @bottle.get('/health')
 def health():
+    bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
     try:
         check_db()
     except Exception as e:
@@ -46,6 +48,7 @@ def request_wrapper(func):
 
 @bottle.get('/cpu_usage')
 def cpu_usage():
+    bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
     start = time.time()
     while True:
         if time.time() - start > 10.0:

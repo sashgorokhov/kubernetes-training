@@ -1,50 +1,61 @@
 from __future__ import print_function
 
-import json
-
-import requests
 import sys
 import time
-import subprocess
 
-IP = sys.argv[1]
-URL = 'http://{}/health'.format(IP)
+try:
+    import pykube
+except ImportError:
+    print('Package "pykube" is not installed.\nInstall it:\npip install pykube')
+
+import requests
+
 SLEEP = 0.5
+
+api = pykube.HTTPClient(pykube.KubeConfig.from_file("/vagrant/kubernetes/kubeconfig"))
+
+webapp_sercvice_ip = pykube.Service.objects(api).get_by_name("webapp-service").obj['spec']['clusterIP']
 
 start = time.time()
 
-print('URL: ' + URL)
+health_url = 'http://%s/health' % webapp_sercvice_ip
+print('Health url: ' + health_url)
 
-print('Getting pods...')
+pod_node_map = dict()
 
-pod_list = []
 
-try:
-    output = subprocess.check_output("kubectl --kubeconfig=/vagrant/kubernetes/kubeconfig get po -o json", shell=True)
-except subprocess.CalledProcessError as e:
-    print(e)
-    print(e.output)
-else:
-    output = json.loads(output)
-    output = output.get('items', [])
-    pod_list = [(p['metadata']['name'], p['spec']['nodeName']) for p in output]
+def update_pod_node_map():
+    pod_node_map.clear()
+    pods = pykube.Pod.objects(api).filter(selector="name=webapp")
+    for pod in pods:
+        pod_node_map[pod.obj['metadata']['name']] = pod.obj['spec']['nodeName']
+
+
+update_pod_node_map()
 
 while True:
     st = time.time()
-    print('{:<5.1f} '.format(time.time()-start), end='')
+    print('{:<5.1f} '.format(time.time() - start), end='')
     sys.stdout.flush()
+
     try:
-        response = requests.get(URL, timeout=5)
+        response = requests.get(health_url, timeout=5)
     except Exception as e:
         print('Error: ' + str(e))
     else:
         print(response.text, end='')
-        for pod_name, node_name in pod_list:
-            if pod_name in response.text:
-                print(' --', node_name)
-                break
+
+        pod_name = response.headers.get("HOSTNAME", "unknown")
+        if pod_name != 'unknown':
+            if pod_name not in pod_node_map:
+                update_pod_node_map()
+            if pod_name not in pod_node_map:
+                print(' -- ' + pod_name)
+            else:
+                print(' -- ' + pod_node_map[pod_name])
         else:
-            print(' -- unknown')
-    delta = time.time() - st
-    if delta < SLEEP:
-        time.sleep(SLEEP-delta)
+            print(' -- ' + pod_name)
+
+        delta = time.time() - st
+        if delta < SLEEP:
+            time.sleep(SLEEP - delta)
