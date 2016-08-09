@@ -28,7 +28,7 @@ Vagrant.configure(2) do |config|
         apt-get autoremove -qqy
         apt-get install -qqy puppet-agent
         /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::hosts':}"
-        if [ "$HOSTNAME" == 'puppet' ]; then
+        if [ "$HOSTNAME" == 'puppet.example.com' ]; then
             /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::server':}"
         else
             /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::agent':}"
@@ -55,7 +55,7 @@ Vagrant.configure(2) do |config|
                 v.cpus = node_config[:hostname] == 'master' ? 2 : 1
             end
             node.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
-            #if node_config[:hostname] == 'master'
+            #if node_config[:hostname] == "master"
             #    config.vm.network "forwarded_port", guest: 8080, host: 8081
             #end
         end
