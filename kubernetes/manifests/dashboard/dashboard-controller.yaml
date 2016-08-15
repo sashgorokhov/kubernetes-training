@@ -3,11 +3,11 @@ kind: ReplicationController
 metadata:
   # Keep the name in sync with image version and
   # gce/coreos/kube-manifests/addons/dashboard counterparts
-  name: kubernetes-dashboard-v1.0.1
+  name: kubernetes-dashboard-v1.1.1
   namespace: kube-system
   labels:
     k8s-app: kubernetes-dashboard
-    version: v1.0.1
+    version: v1.1.1
     kubernetes.io/cluster-service: "true"
 spec:
   replicas: 1
@@ -17,13 +17,13 @@ spec:
     metadata:
       labels:
         k8s-app: kubernetes-dashboard
-        version: v1.0.1
+        version: v1.1.1
         kubernetes.io/cluster-service: "true"
     spec:
       hostNetwork: true
       containers:
       - name: kubernetes-dashboard
-        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.0.1
+        image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.1.1
         args:
           - --apiserver-host=http://master.example.com:8080
         resources:
