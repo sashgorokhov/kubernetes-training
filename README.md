@@ -1,4 +1,4 @@
-# puppet-training
+# kubernetes-training
 
 
 ### Start kubernetes cluster:
