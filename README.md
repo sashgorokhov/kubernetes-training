@@ -27,3 +27,8 @@ kubectl create -f /vagrant/kubernetes/manifests/heapster
 ```
 
 Access to grafana: `http://172.16.32.10:8080/api/v1/proxy/namespaces/kube-system/services/monitoring-grafana/`
+
+
+#### Download links
+Hyperkube: http://storage.googleapis.com/kubernetes-release/release/v1.3.5/bin/linux/amd64/hyperkube
+Kubectl: http://storage.googleapis.com/kubernetes-release/release/v1.3.5/bin/linux/amd64/kubectl
