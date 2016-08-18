@@ -16,7 +16,7 @@ SLEEP = 2
 
 api = pykube.HTTPClient(pykube.KubeConfig.from_file("/vagrant/kubernetes/kubeconfig"))
 
-webapp_sercvice_ip = pykube.Service.objects(api).get_by_name("webapp-service").obj['spec']['clusterIP']
+webapp_sercvice_ip = pykube.Service.objects(api).get_by_name("webapp").obj['spec']['clusterIP']
 
 start = time.time()
 
