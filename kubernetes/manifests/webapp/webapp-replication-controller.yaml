@@ -1,16 +1,21 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: webapp-controller
+  name: webapp-1.0
 spec:
   replicas: 1
   selector:
-    name: webapp
+    app: webapp
+    version: "1.0"
   template:
+    metadata:
+      labels:
+        app: webapp
+        version: "1.0"
     spec:
       containers:
         - name: webapp
-          image: master:5000/webapp
+          image: master:5000/webapp:1.0
           env:
             - name: POSTGRES_USER
               value: stolon
@@ -37,7 +42,3 @@ spec:
               port: 80
             initialDelaySeconds: 10
             timeoutSeconds: 5
-    metadata:
-      labels:
-        name: webapp
-        #uses: db

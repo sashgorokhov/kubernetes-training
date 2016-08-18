@@ -14,7 +14,7 @@ SLEEP = 0.5
 
 api = pykube.HTTPClient(pykube.KubeConfig.from_file("/vagrant/kubernetes/kubeconfig"))
 
-webapp_sercvice_ip = pykube.Service.objects(api).get_by_name("webapp-service").obj['spec']['clusterIP']
+webapp_sercvice_ip = pykube.Service.objects(api).get_by_name("webapp").obj['spec']['clusterIP']
 
 start = time.time()
 
@@ -26,7 +26,7 @@ pod_node_map = dict()
 
 def update_pod_node_map():
     pod_node_map.clear()
-    pods = pykube.Pod.objects(api).filter(selector="name=webapp")
+    pods = pykube.Pod.objects(api).filter(selector="app=webapp")
     for pod in pods:
         pod_node_map[pod.obj['metadata']['name']] = pod.obj['spec']['nodeName']
 
