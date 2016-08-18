@@ -46,15 +46,17 @@ while True:
         print(response.text, end='')
 
         pod_name = response.headers.get("HOSTNAME", "unknown")
+        version = response.headers.get("VERSION", "?.?")
         if pod_name != 'unknown':
             if pod_name not in pod_node_map:
                 update_pod_node_map()
             if pod_name not in pod_node_map:
-                print(' -- ' + pod_name)
+                print(' -- ' + pod_name, end='')
             else:
-                print(' -- ' + pod_node_map[pod_name])
+                print(' -- ' + pod_node_map[pod_name], end='')
         else:
-            print(' -- ' + pod_name)
+            print(' -- ' + pod_name, end='')
+        print(' -- ' + version)
 
         delta = time.time() - st
         if delta < SLEEP:

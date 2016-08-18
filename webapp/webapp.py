@@ -1,11 +1,13 @@
 import os
+import sys
 import time
 import traceback
 
 import bottle
-import sys
 
 from postgres import check_db, cursor_only
+
+VERSION = open("VERSION", "r").read()
 
 
 def create_table(curr):
@@ -21,12 +23,14 @@ def drop_table(curr):
 @bottle.get('/')
 def index():
     bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
+    bottle.response.add_header("VERSION", VERSION)
     return '<br>\n'.join('%s: %s' % (k, v) for k, v in sorted(os.environ.items(), key=lambda i: i[0]))
 
 
 @bottle.get('/health')
 def health():
     bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
+    bottle.response.add_header("VERSION", VERSION)
     try:
         check_db()
     except Exception as e:

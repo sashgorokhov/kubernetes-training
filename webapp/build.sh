@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-docker build --rm=true --force-rm -t master:5000/webapp /vagrant/webapp
-docker push master:5000/webapp
+VERSION=`cat /vagrant/webapp/VERSION`
+
+docker build --rm=true --force-rm -t master:5000/webapp:$VERSION /vagrant/webapp
+docker push master:5000/webapp:$VERSION
