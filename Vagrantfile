@@ -39,6 +39,7 @@ Vagrant.configure(2) do |config|
         puppet.vm.provider "virtualbox" do |v|
           v.memory = 2048
           v.cpus = 1
+          v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         end
         puppet.vm.synced_folder "puppet/manifests", "/etc/puppetlabs/code/environments/production/manifests"
         puppet.vm.synced_folder "puppet/modules", "/etc/puppetlabs/code/environments/production/modules"
@@ -53,11 +54,12 @@ Vagrant.configure(2) do |config|
             node.vm.provider "virtualbox" do |v|
                 v.memory = node_config[:hostname] == 'master' ? 4096 : 1024
                 v.cpus = node_config[:hostname] == 'master' ? 2 : 1
+                v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
             end
             node.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
-            #if node_config[:hostname] == "master"
-            #    config.vm.network "forwarded_port", guest: 8080, host: 8081
-            #end
+            if node_config[:hostname] == 'master'
+                node.vm.network "forwarded_port", guest: 8080, host: 8080
+            end
         end
     end
 end

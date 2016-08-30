@@ -14,6 +14,10 @@ class releases::kubernetes inherits releases::params {
     command => "/bin/tar -C ${kubernetes_release} --strip-components 1 -xzf ${kubernetes_release}/server/kubernetes-server-linux-amd64.tar.gz",
     creates => $kubernetes_bin_dir
   }->
+  exec { 'extract kubernetes addons manifests':
+    command => "/bin/tar -C ${kubernetes_release} --strip-components 1 -xzf ${kubernetes_release}/server/kubernetes-manifests.tar.gz",
+    creates => "$kubernetes_release/addons/dns"
+  }->
   releases::binary {'kubernetes binaries':
     names => ['hyperkube', 'kubectl'],
     source => "puppet:///modules/releases/releases/${kubernetes_release_name}/server/bin/"
