@@ -11,6 +11,7 @@ try:
     import pykube
 except ImportError:
     print('Package "pykube" is not installed.\nInstall it:\npip install pykube')
+    exit(-1)
 
 SLEEP = 2
 
