@@ -28,7 +28,7 @@ Vagrant.configure(2) do |config|
         apt-get autoremove -qqy
         apt-get install -qqy puppet-agent
         /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::hosts':}"
-        if [ "$HOSTNAME" == 'puppet.example.com' ]; then
+        if [ "$HOSTNAME" == 'puppet' ]; then
             /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::server':}"
         else
             /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::agent':}"
