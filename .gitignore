@@ -1,2 +1,5 @@
 .vagrant
 puppet/modules/releases/files/*
+.idea/
+kubernetes/kubeconfig
+kubernetes/ssl/
