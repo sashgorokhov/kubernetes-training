@@ -28,6 +28,9 @@
           - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
           - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
           - --client-ca-file=/etc/kubernetes/shared/ssl/ca.pem
+        #  - --authorization-mode=Webhook
+        #  - --authorization-webhook-config-file=/etc/kubernetes/shared/authconfig.yaml
+        #  - --runtime-config=authorization.k8s.io/v1beta1=true
         ports:
         - containerPort: 443
           hostPort: 443
