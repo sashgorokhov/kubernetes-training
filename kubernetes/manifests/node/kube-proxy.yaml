@@ -12,7 +12,7 @@
         command:
           - /hyperkube
           - proxy
-          - --master=https://master.example.com
+          - --master=https://master1.example.com
           - --kubeconfig=/etc/kubernetes/shared/kubeconfig
           - --alsologtostderr
           - --enable-load-reader

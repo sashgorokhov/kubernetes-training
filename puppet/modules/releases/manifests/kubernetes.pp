@@ -1,25 +1,24 @@
 class releases::kubernetes inherits releases::params {
-  $kubernetes_url = 'https://github.com/kubernetes/kubernetes/releases/download/v1.3.5/kubernetes.tar.gz'
-  $kubernetes_release_name = "kubernetes-v1.3.5"
-  $kubernetes_tarname = "${downloads_dir}/${kubernetes_release_name}.tar.gz"
+  $kubernetes_version = 'v1.4.1'
+  $kubernetes_release_name = "kubernetes-$kubernetes_version"
   $kubernetes_release = "${releases_dir}/${kubernetes_release_name}"
-  $kubernetes_bin_dir = "${kubernetes_release}/server/bin"
+  $hyperkube_url = "http://storage.googleapis.com/kubernetes-release/release/$kubernetes_version/bin/linux/amd64/hyperkube"
+  $kubectl_url = "http://storage.googleapis.com/kubernetes-release/release/$kubernetes_version/bin/linux/amd64/kubectl"
 
-  downloader { 'get kubernetes':
-    download_url => $kubernetes_url,
-    tarname      => $kubernetes_tarname,
-    extracted    => $kubernetes_release
+
+  file {$kubernetes_release:
+   ensure => directory
+  }
+  wget::fetch { $hyperkube_url:
+    destination => "$kubernetes_release/hyperkube",
+    require => File[$kubernetes_release]
   }->
-  exec { 'extract kubernetes binaries':
-    command => "/bin/tar -C ${kubernetes_release} --strip-components 1 -xzf ${kubernetes_release}/server/kubernetes-server-linux-amd64.tar.gz",
-    creates => $kubernetes_bin_dir
-  }->
-  exec { 'extract kubernetes addons manifests':
-    command => "/bin/tar -C ${kubernetes_release} --strip-components 1 -xzf ${kubernetes_release}/server/kubernetes-manifests.tar.gz",
-    creates => "$kubernetes_release/addons/dns"
+  wget::fetch { $kubectl_url:
+    destination => "$kubernetes_release/kubectl",
+    require => File[$kubernetes_release]
   }->
   releases::binary {'kubernetes binaries':
     names => ['hyperkube', 'kubectl'],
-    source => "puppet:///modules/releases/releases/${kubernetes_release_name}/server/bin/"
+    source => "puppet:///modules/releases/releases/${kubernetes_release_name}/"
   }
 }

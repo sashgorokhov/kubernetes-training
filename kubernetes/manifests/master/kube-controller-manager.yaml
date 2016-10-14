@@ -12,7 +12,7 @@
         command:
           - /hyperkube
           - controller-manager
-          - --master=https://master.example.com
+          - --master=https://127.0.0.1
           - --kubeconfig=/etc/kubernetes/shared/kubeconfig
           - --alsologtostderr
           - --enable-load-reader

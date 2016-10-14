@@ -28,6 +28,8 @@
           - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
           - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
           - --client-ca-file=/etc/kubernetes/shared/ssl/ca.pem
+          - --apiserver-count=3
+          - --etcd-servers=http://172.16.32.10:2379,http://172.16.32.11:2379,http://172.16.32.12:2379
         #  - --authorization-mode=Webhook
         #  - --authorization-webhook-config-file=/etc/kubernetes/shared/authconfig.yaml
         #  - --runtime-config=authorization.k8s.io/v1beta1=true
