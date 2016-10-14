@@ -3,7 +3,7 @@ clusters:
   - name: kubeauthserver
     cluster:
       certificate-authority: /etc/kubernetes/shared/ssl/ca.pem     # CA for verifying the remote service.
-      server: https://authserver.example.com/authorize # URL of remote service to query. Must use 'https'.
+      server: https://authserver.example.com/authorize-token # URL of remote service to query. Must use 'https'.
 
 # users refers to the API Server's webhook configuration.
 users:

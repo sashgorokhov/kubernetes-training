@@ -9,6 +9,7 @@ nodes = [
   {:hostname => 'master',  :ip => '172.16.32.10'},
   {:hostname => 'node1', :ip => '172.16.32.11'},
   {:hostname => 'node2', :ip => '172.16.32.12'},
+  {:hostname => 'authserver', :ip => '172.16.32.13'},
 ]
 # NOTE: If you add something to nodes, dont forget to modify puppet/manifests/hosts.pp !!
 
@@ -19,6 +20,9 @@ Vagrant.configure(2) do |config|
 
     config.vm.provision "shell", name: "Install puppet", inline: <<-SHELL
         set -ex
+        if [ "$HOSTNAME" == 'authserver' ]; then
+            exit 0
+        fi
         if [ ! -f /home/vagrant/puppetlabs-release-pc1-trusty.deb ]; then
             cd /home/vagrant
             wget https://apt.puppetlabs.com/puppetlabs-release-pc1-trusty.deb
@@ -28,7 +32,7 @@ Vagrant.configure(2) do |config|
         apt-get autoremove -qqy
         apt-get install -qqy puppet-agent
         /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::hosts':}"
-        if [ "$HOSTNAME" == 'puppet.example.com' ]; then
+        if [ "$HOSTNAME" == 'puppet' ]; then
             /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::server':}"
         else
             /opt/puppetlabs/bin/puppet apply --modulepath=/vagrant/puppet/modules -e "class{'puppet::agent':}"
@@ -59,6 +63,9 @@ Vagrant.configure(2) do |config|
             node.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
             if node_config[:hostname] == 'master'
                 node.vm.network "forwarded_port", guest: 8080, host: 8080
+            end
+            if node_config[:hostname] == 'authserver'
+                node.vm.provision "docker"
             end
         end
     end

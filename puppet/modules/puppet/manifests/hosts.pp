@@ -1,7 +1,7 @@
 
 
 class puppet::hosts {
-  $hosts = { puppet => '172.16.32.64', master => '172.16.32.10', node1 => '172.16.32.11', node2 => '172.16.32.12' }
+  $hosts = { puppet => '172.16.32.64', master => '172.16.32.10', node1 => '172.16.32.11', node2 => '172.16.32.12', authserver => '172.16.32.13' }
   keys($hosts).each |String $host_name| {
     if $hostname != $host_name {
       host { "$host_name.${domain}":
