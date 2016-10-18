@@ -31,10 +31,10 @@ def index():
 def health():
     bottle.response.add_header("HOSTNAME", os.environ.get("HOSTNAME", "unknown"))
     bottle.response.add_header("VERSION", VERSION)
-    try:
-        check_db()
-    except Exception as e:
-        return bottle.HTTPError(500, body=str(e))
+    #try:
+    #    check_db()
+    #except Exception as e:
+    #    return bottle.HTTPError(500, body=str(e))
     return 'OK ' + os.environ.get('HOSTNAME', 'unknown')
 
 

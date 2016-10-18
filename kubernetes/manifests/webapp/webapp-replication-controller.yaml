@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: webapp
-          image: master:5000/webapp:1.0
+          image: master1:5000/webapp:1.0
           env:
             - name: POSTGRES_USER
               value: stolon
