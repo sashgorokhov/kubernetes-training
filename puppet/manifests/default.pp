@@ -36,12 +36,19 @@ if 'master' in $hostname {
     require => Class['certs::ca']
   }
   class {'etcd::etcd': }
+  class {'flannel::flannel':
+    require => Class['etcd::etcd']
+  }
+} else {
+  class {'flannel::flannel':}
 }
 
 
 class {'upstart::docker':
 }->
-class {'docker': }
+class {'docker':
+  require => Class['flannel::flannel']
+}
 
 class {'releases::kubernetes':}->
 exec {'create kubeconfig':
@@ -54,7 +61,7 @@ class {'upstart::kubelet':}->
 service {'kubelet':
   ensure => running,
   enable => true,
-  require => [Class['releases::kubernetes'], Class['docker']]
+  require => [Class['releases::kubernetes'], Class['docker'], Class['etcd::etcd']]
 }
 #
 #
