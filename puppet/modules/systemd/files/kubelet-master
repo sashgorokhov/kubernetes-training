@@ -1,0 +1,16 @@
+KUBELET_OPTS="--v=3 \
+--api-servers=https://127.0.0.1 \
+--allow-privileged \
+--serialize-image-pulls=false \
+--master-service-namespace=kube-system \
+--register-node=true \
+--pod-manifest-path=/etc/kubernetes/shared/manifests/master \
+--logtostderr \
+--alsologtostderr \
+--enable-load-reader \
+--cluster-domain=cluster.local \
+--cluster-dns=10.10.0.10 \
+--kubeconfig=/etc/kubernetes/shared/kubeconfig \
+--tls-cert-file=/etc/kubernetes/ssl/node.pem \
+--tls-private-key-file=/etc/kubernetes/ssl/node-key.pem \
+--register-schedulable=false"

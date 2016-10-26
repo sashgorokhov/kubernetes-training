@@ -1,0 +1,15 @@
+[Unit]
+Description=Flannel
+#Requires=etcd.service
+#After=etcd.service
+
+[Service]
+EnvironmentFile=/etc/environment
+#ExecStartPre=-/bin/bash -c "until /usr/bin/etcdctl set /coreos.com/network/config < /etc/flannel/flannel-config.json; do echo \"waiting for etcd to become available...\"; sleep 5; done"
+ExecStart=/usr/bin/flanneld --iface=enp0s8 --etcd-endpoints=http://master.example.com:2379
+ExecStartPost=-/bin/bash -c "until [ -e /run/flannel/subnet.env ]; do echo \"waiting for write.\"; sleep 3; done; bash /vagrant/puppet/modules/releases/files/releases/flannel-0.5.5-linux-amd64/mk-docker-opts.sh"
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

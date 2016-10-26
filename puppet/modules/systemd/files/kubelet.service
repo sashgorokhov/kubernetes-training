@@ -1,0 +1,13 @@
+[Unit]
+Description=Kubelet
+Requires=flannel.service docker.service
+After=flannel.service docker.service
+
+[Service]
+EnvironmentFile=/etc/default/kubelet
+ExecStart=/usr/bin/hyperkube kubelet $KUBELET_OPTS
+Restart=on-failure
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

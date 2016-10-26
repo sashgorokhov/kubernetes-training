@@ -1,0 +1,27 @@
+KUBELET_OPTS="--v=3 \
+--api-servers=https://master.example.com \
+--allow-privileged \
+--serialize-image-pulls=false \
+--master-service-namespace=kube-system \
+--register-node=true \
+--pod-manifest-path=/etc/kubernetes/shared/manifests/node \
+--logtostderr \
+--alsologtostderr \
+--enable-load-reader \
+--cluster-domain=cluster.local \
+--cluster-dns=10.10.0.10 \
+--kubeconfig=/etc/kubernetes/shared/kubeconfig \
+--tls-cert-file=/etc/kubernetes/ssl/node.pem \
+--tls-private-key-file=/etc/kubernetes/ssl/node-key.pem"
+
+description: VGA compatible controller
+                product: Caicos [Radeon HD 6450/7450/8450 / R5 230 OEM]
+                vendor: Advanced Micro Devices, Inc. [AMD/ATI]
+                physical id: 0
+                bus info: pci@0000:01:00.0
+                version: 00
+                width: 64 bits
+                clock: 33MHz
+                capabilities: pm pciexpress msi vga_controller bus_master cap_list rom
+                configuration: driver=radeon latency=0
+                resources: irq:32 memory:e0000000-efffffff memory:f7d20000-f7d3ffff ioport:e000(size=256) memory:f7d00000-f7d1ffff

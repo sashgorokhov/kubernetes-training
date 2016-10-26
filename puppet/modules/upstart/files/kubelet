@@ -1,6 +1,6 @@
 set -ex
 
-API_SERVERS="https://master1.example.com"
+API_SERVERS="https://master.example.com"
 
 if [ -f /etc/kubernetes/ssl/apiserver.pem ]; then
     CONFIG_DIR=/etc/kubernetes/shared/manifests/master

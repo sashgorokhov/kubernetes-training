@@ -1,13 +1,8 @@
 # sudo /opt/puppetlabs/bin/puppet apply --debug --modulepath=/vagrant/puppet/modules /vagrant/puppet/manifests/default.pp
 
-#stage { 'pre': before => Stage['main'] }
-
 class {'puppet::hosts':}
-
-->
 class {'certs::ca':}->
 class {'certs::node':}
-
 
 package {'bridge-utils':
   ensure => present
@@ -31,24 +26,21 @@ file_line {'alias kubectl to kube-system':
   require => File['/etc/bash.bashrc']
 }
 
+
 if 'master' in $hostname {
   class {'certs::apiserver':
     require => Class['certs::ca']
   }
-  class {'etcd::etcd': }
-  class {'flannel::flannel':
-    require => Class['etcd::etcd']
-  }
+  class {'etcd':}->
+  class {'flannel':}
 } else {
-  class {'flannel::flannel':}
+  class {'flannel':}
 }
 
-
-class {'upstart::docker':
-}->
 class {'docker':
-  require => Class['flannel::flannel']
+  require => Class['flannel']
 }
+
 
 class {'releases::kubernetes':}->
 exec {'create kubeconfig':
@@ -57,21 +49,22 @@ exec {'create kubeconfig':
   unless => "/usr/bin/test -f /etc/kubernetes/shared/kubeconfig"
 }
 
-class {'upstart::kubelet':}->
+class {'systemd::kubelet':}->
 service {'kubelet':
   ensure => running,
   enable => true,
-  require => [Class['releases::kubernetes'], Class['docker'], Class['etcd::etcd']]
+  require => [Class['docker'], Class['releases::kubernetes']],
 }
-#
-#
+
+
 if $hostname == 'master1' {
   class {'docker::registry':
     require => Class['docker']
   }
-#  class {'releases::heapster':}#->
-#  #class {'heapster':
-#  #  require => Class['upstart::kubelet']
-#  #}->
-#  class {'releases::stolon':}
 }
+##  class {'releases::heapster':}#->
+##  #class {'heapster':
+##  #  require => Class['upstart::kubelet']
+##  #}->
+##  class {'releases::stolon':}
+#}
