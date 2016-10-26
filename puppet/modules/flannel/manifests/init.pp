@@ -1,6 +1,6 @@
 
 
-class flannel::flannel {
+class flannel {
   if 'master' in $hostname {
     file { '/etc/flannel':
       ensure => directory
@@ -9,16 +9,16 @@ class flannel::flannel {
       ensure => file,
       source => 'puppet:///modules/upstart/flannel-config.json'
     }->
-    exec { 'insert flannel configs to etcd':
-      command => '/usr/bin/etcdctl set /coreos.com/network/config < /etc/flannel/flannel-config.json',
+    exec {'wait for etcd to become available':
+      command => '/bin/bash -c "until /usr/bin/etcdctl set /coreos.com/network/config < /etc/flannel/flannel-config.json; do echo \"waiting for etcd to become available...\"; sleep 5; done"',
       unless  => '/usr/bin/etcdctl get /coreos.com/network/config',
     }
   }
-  class {'upstart::flanneld':}->
   class {'releases::flannel':}->
-  service { 'flanneld':
+  class {'systemd::flannel':}->
+  service { 'flannel':
     ensure => running,
     enable => true,
-    require => [Class['releases::flannel'], Class['upstart::flanneld']]
+    require => [Class['releases::flannel'], Class['systemd::flannel']]
   }
 }
