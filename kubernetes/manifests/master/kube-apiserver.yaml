@@ -1,54 +1,83 @@
----
-  kind: Pod
-  apiVersion: v1
-  metadata:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-apiserver
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - /hyperkube
+    - apiserver
+    - --v=3
+    - --admission-control=NamespaceLifecycle,LimitRanger,ResourceQuota,ServiceAccount
+    - --etcd_servers=http://master.example.com:2379
+    - --allow-privileged=true
+    - --service-cluster-ip-range=10.10.0.0/16
+    - --alsologtostderr
+    - --logtostderr
+    - --enable-load-reader
+    - --secure-port=443
+    - --master-service-namespace="kube-system"
+    - --advertise-address=172.16.32.10 # TODO: configure this dynamically
+    - --insecure-bind-address=0.0.0.0 # remove if running in production
+    - --kubelet-certificate-authority=/etc/kubernetes/shared/ssl/ca.pem
+    - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
+    - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+    - --client-ca-file=/etc/kubernetes/shared/ssl/ca.pem
+    image: gcr.io/google_containers/hyperkube:v1.4.5
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 8080
+        scheme: HTTP
+      initialDelaySeconds: 15
+      timeoutSeconds: 15
     name: kube-apiserver
-    namespace: kube-system
-  spec:
-    hostNetwork: true
-    containers:
-      - name: "kube-apiserver"
-        image: gcr.io/google_containers/hyperkube:v1.3.5
-        command:
-          - /hyperkube
-          - apiserver
-          - --v=3
-          - --admission-control=NamespaceLifecycle,LimitRanger,ResourceQuota,ServiceAccount
-          - --etcd_servers=http://master.example.com:2379
-          - --allow-privileged=true
-          - --service-cluster-ip-range=10.10.0.0/16
-          - --alsologtostderr
-          - --logtostderr
-          - --enable-load-reader
-          - --secure-port=443
-          - --master-service-namespace="kube-system"
-          - --advertise-address=172.16.32.10 # TODO: configure this dynamically
-          - --insecure-bind-address=0.0.0.0 # remove if running in production
-          - --kubelet-certificate-authority=/etc/kubernetes/shared/ssl/ca.pem
-          - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
-          - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
-          - --client-ca-file=/etc/kubernetes/shared/ssl/ca.pem
-          - --apiserver-count=3
-          - --etcd-servers=http://172.16.32.10:2379,http://172.16.32.11:2379,http://172.16.32.12:2379
-        #  - --authorization-mode=Webhook
-        #  - --authorization-webhook-config-file=/etc/kubernetes/shared/authconfig.yaml
-        #  - --runtime-config=authorization.k8s.io/v1beta1=true
-        ports:
-        - containerPort: 443
-          hostPort: 443
-          name: https
-        - containerPort: 8080
-          hostPort: 8080
-          name: local
-        volumeMounts:
-        - mountPath: /etc/kubernetes
-          name: kubernetes-confdir
-        - mountPath: /etc/ssl/certs
-          name: ssl-certs-host
-    volumes:
-    - hostPath:
-        path: /etc/kubernetes
+    ports:
+    - containerPort: 443
+      hostPort: 443
+      name: https
+      protocol: TCP
+    - containerPort: 8080
+      hostPort: 8080
+      name: local
+      protocol: TCP
+    resources:
+      requests:
+        cpu: 250m
+    volumeMounts:
+    - mountPath: /srv/kubernetes
+      name: srvkube
+      readOnly: true
+    - mountPath: /etc/ssl
+      name: etcssl
+      readOnly: true
+    - mountPath: /usr/share/ca-certificates
+      name: usrsharecacerts
+      readOnly: true
+    - mountPath: /srv/sshproxy
+      name: srvsshproxy
+    - mountPath: /etc/kubernetes
       name: kubernetes-confdir
-    - hostPath:
-        path: /usr/share/ca-certificates
-      name: ssl-certs-host
+  dnsPolicy: ClusterFirst
+  hostNetwork: true
+  restartPolicy: Always
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes
+    name: kubernetes-confdir
+  - hostPath:
+      path: /srv/kubernetes
+    name: srvkube
+  - hostPath:
+      path: /etc/ssl
+    name: etcssl
+  - hostPath:
+      path: /usr/share/ca-certificates
+    name: usrsharecacerts
+  - hostPath:
+      path: /srv/sshproxy
+    name: srvsshproxy

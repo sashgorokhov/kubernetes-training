@@ -1,41 +1,63 @@
----
-  kind: Pod
-  apiVersion: v1
-  metadata:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-controller-manager
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - /hyperkube
+    - controller-manager
+    - --master=https://127.0.0.1
+    - --kubeconfig=/etc/kubernetes/shared/kubeconfig
+    - --alsologtostderr
+    - --enable-load-reader
+    - --v=3
+    - --root-ca-file=/etc/kubernetes/shared/ssl/ca.pem
+    - --service-account-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+    - --service-cluster-ip-range=10.10.0.0/16
+    image: gcr.io/google_containers/hyperkube:v1.4.5
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 10252
+        scheme: HTTP
+      initialDelaySeconds: 15
+      timeoutSeconds: 15
     name: kube-controller-manager
-    namespace: kube-system
-  spec:
-    hostNetwork: true
-    containers:
-      - name: kube-controller-manager
-        image: gcr.io/google_containers/hyperkube:v1.3.5
-        command:
-          - /hyperkube
-          - controller-manager
-          - --master=https://127.0.0.1
-          - --kubeconfig=/etc/kubernetes/shared/kubeconfig
-          - --alsologtostderr
-          - --enable-load-reader
-          - --v=3
-          - --leader-elect
-          - --root-ca-file=/etc/kubernetes/shared/ssl/ca.pem
-          - --service-account-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
-          - --service-cluster-ip-range=10.10.0.0/16
-        livenessProbe:
-          httpGet:
-            path: "/healthz"
-            port: 10252
-          initialDelaySeconds: 15
-          timeoutSeconds: 15
-        volumeMounts:
-        - mountPath: /etc/kubernetes
-          name: kubernetes-confdir
-        - mountPath: /etc/ssl/certs
-          name: ssl-certs-host
-    volumes:
-    - hostPath:
-        path: /etc/kubernetes
+    resources:
+      limits:
+        cpu: 200m
+      requests:
+        cpu: 200m
+    volumeMounts:
+    - mountPath: /srv/kubernetes
+      name: srvkube
+      readOnly: true
+    - mountPath: /etc/ssl
+      name: etcssl
+      readOnly: true
+    - mountPath: /usr/share/ca-certificates
+      name: usrsharecacerts
+      readOnly: true
+    - mountPath: /etc/kubernetes
       name: kubernetes-confdir
-    - hostPath:
-        path: /usr/share/ca-certificates
-      name: ssl-certs-host
+  dnsPolicy: ClusterFirst
+  hostNetwork: true
+  restartPolicy: Always
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes
+    name: kubernetes-confdir
+  - hostPath:
+      path: /srv/kubernetes
+    name: srvkube
+  - hostPath:
+      path: /etc/ssl
+    name: etcssl
+  - hostPath:
+      path: /usr/share/ca-certificates
+    name: usrsharecacerts

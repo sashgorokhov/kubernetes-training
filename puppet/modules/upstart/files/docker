@@ -1,7 +1,0 @@
-FLANNEL_OPTS=""
-if [ -f /run/flannel/subnet.env ]; then
-   . /run/flannel/subnet.env
-   FLANNEL_OPTS="--bip=${FLANNEL_SUBNET} --mtu=${FLANNEL_MTU}"
-fi
-DOCKER_OPTS="--insecure-registry master:5000 --dns 8.8.8.8 --dns 8.8.4.4 $FLANNEL_OPTS"
-echo FLANNEL_OPTS=$FLANNEL_OPTS

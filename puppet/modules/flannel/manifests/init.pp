@@ -7,7 +7,7 @@ class flannel {
     }->
     file { '/etc/flannel/flannel-config.json':
       ensure => file,
-      source => 'puppet:///modules/upstart/flannel-config.json'
+      source => 'puppet:///modules/systemd/flannel-config.json'
     }->
     exec {'wait for etcd to become available':
       command => '/bin/bash -c "until /usr/bin/etcdctl set /coreos.com/network/config < /etc/flannel/flannel-config.json; do echo \"waiting for etcd to become available...\"; sleep 5; done"',

@@ -1,34 +1,39 @@
----
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: kube-proxy
-    namespace: kube-system
-  spec:
-    hostNetwork: true
-    containers:
-      - name: kube-proxy
-        image: gcr.io/google_containers/hyperkube:v1.3.5
-        command:
-          - /hyperkube
-          - proxy
-          - --master=https://master1.example.com
-          - --kubeconfig=/etc/kubernetes/shared/kubeconfig
-          - --alsologtostderr
-          - --enable-load-reader
-          - --v=3
-          - --masquerade-all=true
-        securityContext:
-          privileged: true
-        volumeMounts:
-        - mountPath: /etc/kubernetes
-          name: kubernetes-confdir
-        - mountPath: /etc/ssl/certs
-          name: ssl-certs-host
-    volumes:
-    - hostPath:
-        path: /etc/kubernetes
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-proxy
+  namespace: kube-system
+  labels:
+    tier: node
+    component: kube-proxy
+spec:
+  hostNetwork: true
+  containers:
+  - name: kube-proxy
+    image: gcr.io/google_containers/hyperkube:v1.4.5
+    resources:
+      requests:
+        cpu: 100m
+    command:
+    - /hyperkube
+    - proxy
+    - --master=https://master.example.com
+    - --kubeconfig=/etc/kubernetes/shared/kubeconfig
+    - --alsologtostderr
+    - --enable-load-reader
+    - --v=3
+    - --masquerade-all=true
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /etc/kubernetes
       name: kubernetes-confdir
-    - hostPath:
-        path: /usr/share/ca-certificates
+    - mountPath: /etc/ssl/certs
       name: ssl-certs-host
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes
+    name: kubernetes-confdir
+  - hostPath:
+      path: /usr/share/ca-certificates
+    name: ssl-certs-host

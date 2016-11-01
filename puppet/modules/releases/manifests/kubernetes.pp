@@ -1,5 +1,5 @@
 class releases::kubernetes inherits releases::params {
-  $kubernetes_version = 'v1.4.1'
+  $kubernetes_version = 'v1.4.5'
   $kubernetes_release_name = "kubernetes-$kubernetes_version"
   $kubernetes_release = "${releases_dir}/${kubernetes_release_name}"
   $hyperkube_url = "http://storage.googleapis.com/kubernetes-release/release/$kubernetes_version/bin/linux/amd64/hyperkube"

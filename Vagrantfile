@@ -11,9 +11,7 @@ nodes = [
     {:hostname => 'node3',  :ip => '172.16.32.15'},
 ]
 
-# NOTE: If you add something to nodes, dont forget to modify puppet/manifests/hosts.pp !!
-
-# if, while provisioning with puppet you getting errors like "Could not evaluate: undefined method `exist?'", then simply re-run provision.
+# NOTE: If you add something to nodes, dont forget to modify puppet/modules/puppet/manifests/hosts.pp !!
 
 Vagrant.configure(2) do |config|
     config.vm.box = "ubuntu/xenial64"
@@ -37,8 +35,9 @@ Vagrant.configure(2) do |config|
         master.vm.network "private_network", ip: master_ip
         master.vm.network "forwarded_port", guest: 8080, host: 8080
         master.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
+        master.vm.synced_folder "kubernetes/addons", "/etc/kubernetes/addons"
         master.vm.provider "virtualbox" do |v|
-            v.memory = 2048
+            v.memory = 4096
             v.cpus = 2
             v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         end
@@ -57,7 +56,7 @@ Vagrant.configure(2) do |config|
             node.vm.network "private_network", ip: node_config[:ip]
             node.vm.synced_folder "kubernetes", "/etc/kubernetes/shared"
             node.vm.provider "virtualbox" do |v|
-                v.memory = 1024
+                v.memory = 2048
                 v.cpus = 2
                 v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
             end

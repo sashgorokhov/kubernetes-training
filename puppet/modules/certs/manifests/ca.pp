@@ -7,6 +7,9 @@ class certs::ca inherits certs::params {
   file {'/etc/kubernetes/shared':
    ensure => directory
   }->
+  file {'/etc/kubernetes/shared/ssl':
+   ensure => directory
+  }->
   exec {'ca-key.pem':
     command => "/usr/bin/openssl genrsa -out /etc/kubernetes/shared/ssl/ca-key.pem 2048",
     unless => "/usr/bin/test -f /etc/kubernetes/shared/ssl/ca-key.pem"

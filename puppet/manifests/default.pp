@@ -4,9 +4,6 @@ class {'puppet::hosts':}
 class {'certs::ca':}->
 class {'certs::node':}
 
-package {'bridge-utils':
-  ensure => present
-}
 
 file {'/etc/bash.bashrc':
   ensure => file
@@ -57,7 +54,7 @@ service {'kubelet':
 }
 
 
-if $hostname == 'master1' {
+if "master" in $hostname {
   class {'docker::registry':
     require => Class['docker']
   }
