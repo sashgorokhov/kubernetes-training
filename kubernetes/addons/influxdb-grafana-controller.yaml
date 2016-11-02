@@ -38,7 +38,6 @@ spec:
             mountPath: /data
         - image: gcr.io/google_containers/heapster_grafana:v3.1.1
           name: grafana
-          env:
           resources:
             # keep request = limit to keep this container in guaranteed class
             limits:

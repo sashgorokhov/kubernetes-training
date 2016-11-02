@@ -21,8 +21,7 @@ spec:
     - --kubeconfig=/etc/kubernetes/shared/kubeconfig
     - --alsologtostderr
     - --enable-load-reader
-    - --v=3
-    - --masquerade-all=true
+    - --v=2
     securityContext:
       privileged: true
     volumeMounts:
